@@ -30,7 +30,7 @@ object Vec2 {
 
 }
 
-trait Vec2[T: Numeric](using math: VMath[T]) extends IndexedSeq[T] {
+trait Vec2[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   val x: T
   val y: T
 
@@ -47,7 +47,7 @@ trait Vec2[T: Numeric](using math: VMath[T]) extends IndexedSeq[T] {
     case i => throw IndexOutOfBoundsException(s"Index out of range: $i")
   }
 
-  inline def isZero: Boolean = x == math.Zero && y == math.Zero
+  inline def isZero: Boolean = x == num.zero && y == num.zero
 
   // def ++ : V
   // def -- : V
