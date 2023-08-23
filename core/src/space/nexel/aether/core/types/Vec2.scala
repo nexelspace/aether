@@ -7,34 +7,43 @@ import space.nexel.aether.core.math.VMathF
 import space.nexel.aether.core.math.VMathD
 import space.nexel.aether.core.math.VMath
 import space.nexel.aether.core.math.VMathI
+import scala.annotation.targetName
 
-object Vec2 {
 
-  def apply(x: Int, y: Int) = Vec2I(x, y)
-  def apply(x: Float, y: Float) = Vec2F(x, y)
-  def apply(x: Double, y: Double) = Vec2D(x, y)
+object Vec2I {  
+  given Conversion[Vec2[Int], Vec2I] = (v: Vec2[Int]) => v
 
-  given mathI: VMath[Int] = VMathI
-  given mathF: VMath[Float] = VMathF
-  given mathD: VMath[Double] = VMathD
+  def apply(v: Int): Vec2I = new Vec2I(v, v)
+}
 
-  case class Vec2I(x: Int, y: Int) extends Vec2[Int] {
-    inline def create(x: Int, y: Int) = Vec2I(x, y)
-  }
-  case class Vec2F(x: Float, y: Float) extends Vec2[Float] {
-    inline def create(x: Float, y: Float) = Vec2F(x, y)
-  }
-  case class Vec2D(x: Double, y: Double) extends Vec2[Double] {
-    inline def create(x: Double, y: Double) = Vec2D(x, y)
-  }
+case class Vec2I(x: Int, y: Int) extends Vec2[Int] {
+  inline def create(x: Int, y: Int): Vec2I = Vec2I(x, y)
+}
 
+object Vec2F {  
+  given Conversion[Vec2[Float], Vec2F] = (v: Vec2[Float]) => v
+
+  def apply(v: Float) = new Vec2F(v, v)
+}
+
+case class Vec2F(x: Float, y: Float) extends Vec2[Float] {
+  given Conversion[Vec2[Double], Vec2D] = (v: Vec2[Double]) => v
+  inline def create(x: Float, y: Float): Vec2F = Vec2F(x, y)
+}
+
+object Vec2D {  
+  def apply(v: Double) = new Vec2D(v, v)
+}
+
+case class Vec2D(x: Double, y: Double) extends Vec2[Double] {
+  inline def create(x: Double, y: Double) = Vec2D(x, y)
 }
 
 trait Vec2[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   val x: T
   val y: T
 
-  private type V = Vec2[T]
+  type V = Vec2[T]
 
   override val length = 2
 
@@ -59,9 +68,9 @@ trait Vec2[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   inline def +(s: T): V = create(x + s, y + s)
   inline def -(s: T): V = create(x - s, y - s)
 
-  inline def *(v: V) = create(x * v.x, y * v.y)
+  inline def *(v: V): V = create(x * v.x, y * v.y)
   inline def /(v: V): V = create(math.div(x, v.x), math.div(y, v.y))
-  inline def +(v: V) = create(x + v.x, y + v.y)
+  inline def +(v: V): V = create(x + v.x, y + v.y)
   inline def -(v: V) = create(x - v.x, y - v.y)
 
   inline def ==(v: V): Boolean = x == v.x && y == v.y

@@ -8,25 +8,21 @@ import space.nexel.aether.core.math.VMathD
 import space.nexel.aether.core.math.VMath
 import space.nexel.aether.core.math.VMathI
 
+case class Vec3I(x: Int, y: Int, z: Int) extends Vec3[Int] {
+  inline def create(x: Int, y: Int, z: Int) = Vec3I(x, y, z)
+}
+case class Vec3F(x: Float, y: Float, z: Float) extends Vec3[Float] {
+  inline def create(x: Float, y: Float, z: Float) = Vec3F(x, y, z)
+}
+case class Vec3D(x: Double, y: Double, z: Double) extends Vec3[Double] {
+  inline def create(x: Double, y: Double, z: Double) = Vec3D(x, y, z)
+}
+
 object Vec3 {
 
   def apply(x: Int, y: Int, z: Int) = Vec3I(x, y, z)
   def apply(x: Float, y: Float, z: Float) = Vec3F(x, y, z)
   def apply(x: Double, y: Double, z: Double) = Vec3D(x, y, z)
-
-  given mathI: VMath[Int] = VMathI
-  given mathF: VMath[Float] = VMathF
-  given mathD: VMath[Double] = VMathD
-
-  case class Vec3I(x: Int, y: Int, z: Int) extends Vec3[Int] {
-    inline def create(x: Int, y: Int, z: Int) = Vec3I(x, y, z)
-  }
-  case class Vec3F(x: Float, y: Float, z: Float) extends Vec3[Float] {
-    inline def create(x: Float, y: Float, z: Float) = Vec3F(x, y, z)
-  }
-  case class Vec3D(x: Double, y: Double, z: Double) extends Vec3[Double] {
-    inline def create(x: Double, y: Double, z: Double) = Vec3D(x, y, z)
-  }
 
 }
 

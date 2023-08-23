@@ -1,6 +1,10 @@
 package space.nexel.aether.core.math
 
-object VMath {}
+object VMath {
+  given mathI: VMath[Int] = VMathI
+  given mathF: VMath[Float] = VMathF
+  given mathD: VMath[Double] = VMathD  
+}
 
 trait VMath[T] {
 

@@ -8,25 +8,21 @@ import space.nexel.aether.core.math.VMathD
 import space.nexel.aether.core.math.VMath
 import space.nexel.aether.core.math.VMathI
 
+case class Vec4I(x: Int, y: Int, z: Int, w: Int) extends Vec4[Int] {
+  inline def create(x: Int, y: Int, z: Int, w: Int) = Vec4I(x, y, z, w)
+}
+case class Vec4F(x: Float, y: Float, z: Float, w: Float) extends Vec4[Float] {
+  inline def create(x: Float, y: Float, z: Float, w: Float) = Vec4F(x, y, z, w)
+}
+case class Vec4D(x: Double, y: Double, z: Double, w: Double) extends Vec4[Double] {
+  inline def create(x: Double, y: Double, z: Double, w: Double) = Vec4D(x, y, z, w)
+}
+
 object Vec4 {
 
   def apply(x: Int, y: Int, z: Int, w: Int) = Vec4I(x, y, z, w)
   def apply(x: Float, y: Float, z: Float, w: Float) = Vec4F(x, y, z, w)
   def apply(x: Double, y: Double, z: Double, w: Double) = Vec4D(x, y, z, w)
-
-  given mathI: VMath[Int] = VMathI
-  given mathF: VMath[Float] = VMathF
-  given mathD: VMath[Double] = VMathD
-
-  case class Vec4I(x: Int, y: Int, z: Int, w: Int) extends Vec4[Int] {
-    inline def create(x: Int, y: Int, z: Int, w: Int) = Vec4I(x, y, z, w)
-  }
-  case class Vec4F(x: Float, y: Float, z: Float, w: Float) extends Vec4[Float] {
-    inline def create(x: Float, y: Float, z: Float, w: Float) = Vec4F(x, y, z, w)
-  }
-  case class Vec4D(x: Double, y: Double, z: Double, w: Double) extends Vec4[Double] {
-    inline def create(x: Double, y: Double, z: Double, w: Double) = Vec4D(x, y, z, w)
-  }
 
 }
 

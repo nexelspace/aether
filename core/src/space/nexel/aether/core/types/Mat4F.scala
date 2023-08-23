@@ -1,7 +1,7 @@
 package space.nexel.aether.core.types
 
-import space.nexel.aether.core.types.Vec3.Vec3F
-import space.nexel.aether.core.types.Vec4.Vec4F
+import space.nexel.aether.core.types.Vec3F
+import space.nexel.aether.core.types.Vec4F
 
 object Mat4F {
   def apply(a00: Float, a10: Float, a20: Float, a30: Float,

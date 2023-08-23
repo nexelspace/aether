@@ -1,9 +1,6 @@
 package space.nexel.aether.core.buffers
 
-import space.nexel.aether.core.types._
-import space.nexel.aether.core.types.Vec2.*
-import space.nexel.aether.core.types.Vec3.*
-import space.nexel.aether.core.types.Vec4.*
+import space.nexel.aether.core.types.*
 
 /**
   * Vector get/put interface.

@@ -1,7 +1,7 @@
 package space.nexel.aether.core.types
 
 import space.nexel.aether.core.math.VMathF
-import space.nexel.aether.core.types.Vec2.*
+import space.nexel.aether.core.types.*
 
 object Mat2F {
   def apply(
