@@ -3,28 +3,11 @@ package space.nexel.aether.core.types
 import math.Numeric.Implicits.infixNumericOps
 import math.Fractional.Implicits.infixFractionalOps
 import math.Integral.Implicits.infixIntegralOps
+import math.Ordering.Implicits.infixOrderingOps
 import space.nexel.aether.core.math.VMathF
 import space.nexel.aether.core.math.VMathD
 import space.nexel.aether.core.math.VMath
 import space.nexel.aether.core.math.VMathI
-
-case class Vec3I(x: Int, y: Int, z: Int) extends Vec3[Int] {
-  inline def create(x: Int, y: Int, z: Int) = Vec3I(x, y, z)
-}
-case class Vec3F(x: Float, y: Float, z: Float) extends Vec3[Float] {
-  inline def create(x: Float, y: Float, z: Float) = Vec3F(x, y, z)
-}
-case class Vec3D(x: Double, y: Double, z: Double) extends Vec3[Double] {
-  inline def create(x: Double, y: Double, z: Double) = Vec3D(x, y, z)
-}
-
-object Vec3 {
-
-  def apply(x: Int, y: Int, z: Int) = Vec3I(x, y, z)
-  def apply(x: Float, y: Float, z: Float) = Vec3F(x, y, z)
-  def apply(x: Double, y: Double, z: Double) = Vec3D(x, y, z)
-
-}
 
 trait Vec3[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   val x: T
@@ -37,6 +20,7 @@ trait Vec3[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
 
   /** Create new instance of same type */
   protected def create(x: T, y: T, z: T): V
+  protected def step0: V
 
   def apply(index: Int): T = index match {
     case 0 => x
@@ -58,9 +42,12 @@ trait Vec3[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   inline def /(v: V): V = create(math.div(x, v.x), math.div(y, v.y), math.div(z, v.z))
   inline def +(v: V) = create(x + v.x, y + v.y, z + v.z)
   inline def -(v: V) = create(x - v.x, y - v.y, z - v.z)
-
   inline def ==(v: V): Boolean = x == v.x && y == v.y && z == v.z
   inline def !=(v: V): Boolean = x != v.x || y != v.y || z != v.z
+  inline def <(v: V) = x < v.x && y < v.y && z < v.z
+  inline def >(v: V) = x > v.x && y > v.y && z > v.z
+  inline def <=(v: V) = x <= v.x && y <= v.y && z <= v.z
+  inline def >=(v: V) = x >= v.x && y >= v.y && z >= v.z
 
   // Common Functions
 
@@ -71,6 +58,7 @@ trait Vec3[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
 
   inline def mod(v: V): V = create(math.mod(x, v.x), math.mod(y, v.y), math.mod(z, v.z))
   inline def min(v: V): V = create(math.min(x, v.x), math.min(y, v.y), math.min(z, v.z))
+  inline def maxValue: T = math.max(x, y, z)
   inline def max(v: V): V = create(math.max(x, v.x), math.max(y, v.y), math.max(z, v.z))
   inline def clamp(minVal: V, maxVal: V): V = create(math.clamp(x, minVal.x, maxVal.x), math.clamp(y, minVal.y, maxVal.y), math.clamp(z, minVal.z, maxVal.z))
   inline def mix(v: V, a: V): V = create(math.mix(x, v.x, a.x), math.mix(y, v.y, a.y), math.mix(z, v.z, a.z))
@@ -115,3 +103,57 @@ trait Vec3[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   override def toString: String = s"[$x, $y, $z]"
 
 }
+
+// ---- Vec3 Types ----
+
+object Vec3I {  
+  given c: Conversion[Vec3[Int], Vec3I] = (v: Vec3[Int]) => v
+
+  val Zero = Vec3I(0)
+  val One = Vec3I(1)
+  def apply(v: (Int, Int, Int)) = new Vec3I(v._1, v._2, v._3)
+  def apply(v: Int): Vec3I = new Vec3I(v, v, v)
+  def apply(a: Array[Int], index: Int = 0) =
+    new Vec3I(a(index + 0), a(index + 1), a(index + 2))
+}
+
+case class Vec3I(x: Int, y: Int, z: Int) extends Vec3[Int] {
+  inline def create(x: Int, y: Int, z: Int) = Vec3I(x, y, z)
+  inline def step0 = Vec3I(if (x < 0) 0 else 1, if (y < 0) 0 else 1, if (z < 0) 0 else 1)
+
+  def &(c: Int): Vec3I = new Vec3I(x & c, y & c, z & c)
+  def |(c: Int): Vec3I = new Vec3I(x | c, y | c, z | c)
+  def >>(c: Int): Vec3I = new Vec3I(x >> c, y >> c, z >> c)
+  def <<(c: Int): Vec3I = new Vec3I(x << c, y << c, z << c)
+}
+
+object Vec3F {  
+  given Conversion[Vec3[Float], Vec3F] = (v: Vec3[Float]) => v
+
+  val Zero = Vec3F(0)
+  val One = Vec3F(1)
+  def apply(v: (Float, Float, Float)) = new Vec3F(v._1, v._2, v._3)
+  def apply(v: Float): Vec3F = new Vec3F(v, v, v)
+  def apply(a: Array[Float], index: Int = 0) =
+    new Vec3F(a(index + 0), a(index + 1), a(index + 2))
+}
+
+case class Vec3F(x: Float, y: Float, z: Float) extends Vec3[Float] {
+  inline def create(x: Float, y: Float, z: Float) = Vec3F(x, y, z)
+  inline def step0 = Vec3F(if (x < 0) 0 else 1, if (y < 0) 0 else 1, if (z < 0) 0 else 1)
+}
+object Vec3D {  
+  given Conversion[Vec3[Double], Vec3D] = (v: Vec3[Double]) => v
+
+  val Zero = Vec3D(0)
+  val One = Vec3D(1)
+  def apply(v: (Double, Double, Double)) = new Vec3D(v._1, v._2, v._3)
+  def apply(v: Double): Vec3D = new Vec3D(v, v, v)
+  def apply(a: Array[Double], index: Int = 0) =
+    new Vec3D(a(index + 0), a(index + 1), a(index + 2))}
+
+case class Vec3D(x: Double, y: Double, z: Double) extends Vec3[Double] {
+  inline def create(x: Double, y: Double, z: Double) = Vec3D(x, y, z)
+  inline def step0 = Vec3D(if (x < 0) 0 else 1, if (y < 0) 0 else 1, if (z < 0) 0 else 1)
+}
+

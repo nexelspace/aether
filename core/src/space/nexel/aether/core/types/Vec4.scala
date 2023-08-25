@@ -3,28 +3,11 @@ package space.nexel.aether.core.types
 import math.Numeric.Implicits.infixNumericOps
 import math.Fractional.Implicits.infixFractionalOps
 import math.Integral.Implicits.infixIntegralOps
+import math.Ordering.Implicits.infixOrderingOps
 import space.nexel.aether.core.math.VMathF
 import space.nexel.aether.core.math.VMathD
 import space.nexel.aether.core.math.VMath
 import space.nexel.aether.core.math.VMathI
-
-case class Vec4I(x: Int, y: Int, z: Int, w: Int) extends Vec4[Int] {
-  inline def create(x: Int, y: Int, z: Int, w: Int) = Vec4I(x, y, z, w)
-}
-case class Vec4F(x: Float, y: Float, z: Float, w: Float) extends Vec4[Float] {
-  inline def create(x: Float, y: Float, z: Float, w: Float) = Vec4F(x, y, z, w)
-}
-case class Vec4D(x: Double, y: Double, z: Double, w: Double) extends Vec4[Double] {
-  inline def create(x: Double, y: Double, z: Double, w: Double) = Vec4D(x, y, z, w)
-}
-
-object Vec4 {
-
-  def apply(x: Int, y: Int, z: Int, w: Int) = Vec4I(x, y, z, w)
-  def apply(x: Float, y: Float, z: Float, w: Float) = Vec4F(x, y, z, w)
-  def apply(x: Double, y: Double, z: Double, w: Double) = Vec4D(x, y, z, w)
-
-}
 
 trait Vec4[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
   val x: T
@@ -105,4 +88,54 @@ trait Vec4[T](using math: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
 
   override def toString: String = s"[$x, $y, $z, $w]"
 
+}
+
+object Vec4I {  
+  given Conversion[Vec4[Int], Vec4I] = (v: Vec4[Int]) => v
+
+  val Zero = Vec4I(0)
+  val One = Vec4I(1)
+  def apply(v: (Int, Int, Int, Int)) = new Vec4I(v._1, v._2, v._3, v._4)
+  def apply(v: Int): Vec4I = new Vec4I(v, v, v, v)
+  def apply(a: Array[Int], index: Int = 0) =
+    new Vec4I(a(index + 0), a(index + 1), a(index + 2), a(index + 3))
+}
+
+case class Vec4I(x: Int, y: Int, z: Int, w: Int) extends Vec4[Int] {
+  inline def create(x: Int, y: Int, z: Int, w: Int) = Vec4I(x, y, z, w)
+
+  def &(c: Int): Vec4I = new Vec4I(x & c, y & c, z & c, w & c)
+  def |(c: Int): Vec4I = new Vec4I(x | c, y | c, z | c, w | c)
+  def >>(c: Int): Vec4I = new Vec4I(x >> c, y >> c, z >> c, w >> c)
+  def <<(c: Int): Vec4I = new Vec4I(x << c, y << c, z << c, w << c)
+}
+
+object Vec4F {  
+  given Conversion[Vec4[Float], Vec4F] = (v: Vec4[Float]) => v
+
+  val Zero = Vec4F(0)
+  val One = Vec4F(1)
+  def apply(v: (Float, Float, Float, Float)) = new Vec4F(v._1, v._2, v._3, v._4)
+  def apply(v: Float): Vec4F = new Vec4F(v, v, v, v)
+  def apply(a: Array[Float], index: Int = 0) =
+    new Vec4F(a(index + 0), a(index + 1), a(index + 2), a(index + 3))
+}
+
+case class Vec4F(x: Float, y: Float, z: Float, w: Float) extends Vec4[Float] {
+  inline def create(x: Float, y: Float, z: Float, w: Float) = Vec4F(x, y, z, w)
+}
+
+object Vec4D {  
+  given Conversion[Vec4[Double], Vec4D] = (v: Vec4[Double]) => v
+
+  val Zero = Vec4D(0)
+  val One = Vec4D(1)
+  def apply(v: (Double, Double, Double, Double)) = new Vec4D(v._1, v._2, v._3, v._4)
+  def apply(v: Double): Vec4D = Vec4D(v, v, v, v)
+  def apply(a: Array[Double], index: Int = 0) =
+    new Vec4D(a(index + 0), a(index + 1), a(index + 2), a(index + 3))
+}
+
+case class Vec4D(x: Double, y: Double, z: Double, w: Double) extends Vec4[Double] {
+  inline def create(x: Double, y: Double, z: Double, w: Double) = Vec4D(x, y, z, w)
 }

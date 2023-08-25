@@ -1,7 +1,5 @@
 package space.nexel.aether.core.types
 
-import space.nexel.aether.core.types.Vec3.*
-
 object Mat3F {
   def apply(
     a00: Float, a10: Float, a20: Float,
