@@ -4,7 +4,7 @@ import space.nexel.aether.core.sys.Resource
 import space.nexel.aether.core.sys.NativeResource
 
 object ShaderObject {
-
+  type ShaderObjectFactory = Resource.Factory[ShaderObject, ShaderObject.Config] 
   case class Config(typ: Type) extends Resource.Config
 
   enum Type():

@@ -4,6 +4,7 @@ import space.nexel.aether.core.sys.Resource
 import space.nexel.aether.core.sys.NativeResource
 
 object ShaderProgram {
+  type ShaderProgramFactory = Resource.Factory[ShaderProgram, Config]
   case class Config(
       vertexShader: ShaderObject,
       fragmentShader: ShaderObject
