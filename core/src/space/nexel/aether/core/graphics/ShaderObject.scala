@@ -1,7 +1,7 @@
 package space.nexel.aether.core.graphics
 
-import space.nexel.aether.core.sys.Resource
-import space.nexel.aether.core.sys.NativeResource
+import space.nexel.aether.core.platform.Resource
+import space.nexel.aether.core.platform.NativeResource
 
 object ShaderObject {
   type ShaderObjectFactory = Resource.Factory[ShaderObject, ShaderObject.Config] 

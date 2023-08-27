@@ -1,4 +1,4 @@
-package space.nexel.aether.core.sys
+package space.nexel.aether.core.platform
 
 object Event {
   

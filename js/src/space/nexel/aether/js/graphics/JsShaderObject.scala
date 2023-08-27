@@ -5,7 +5,7 @@ import space.nexel.aether.core.graphics.ShaderObject
 import space.nexel.aether.core.graphics.ShaderObject.Type
 import space.nexel.aether.core.graphics.ShaderObject.Type.*
 
-import space.nexel.aether.core.sys.Resource
+import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.graphics.ShaderObject.*
 
 object JsShaderObject {

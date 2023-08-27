@@ -1,11 +1,11 @@
 package space.nexel.aether.js.sys
 
-import space.nexel.aether.core.sys.Platform
-import space.nexel.aether.core.sys.Platform.Update
-import space.nexel.aether.core.sys.Log
-import space.nexel.aether.core.sys.Display
-import space.nexel.aether.core.sys.Event
-import space.nexel.aether.core.sys.EventQueue
+import space.nexel.aether.core.platform.Platform
+import space.nexel.aether.core.platform.Platform.Update
+import space.nexel.aether.core.platform.Log
+import space.nexel.aether.core.platform.Display
+import space.nexel.aether.core.platform.Event
+import space.nexel.aether.core.platform.EventQueue
 import org.scalajs.dom
 
 class JsPlatform extends Platform {

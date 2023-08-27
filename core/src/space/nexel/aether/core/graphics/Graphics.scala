@@ -1,6 +1,6 @@
 package space.nexel.aether.core.graphics
 
-import space.nexel.aether.core.sys.Resource
+import space.nexel.aether.core.platform.Resource
 
 trait Graphics {
   val shaderProgramFactory: Resource.Factory[ShaderProgram, ShaderProgram.Config]

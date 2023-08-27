@@ -1,8 +1,8 @@
 package space.nexel.aether.core.graphics
 
-import space.nexel.aether.core.sys.Resource
+import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.types.Vec2I
-import space.nexel.aether.core.sys.NativeResource
+import space.nexel.aether.core.platform.NativeResource
 
 object Texture {
   type TextureFactory = Resource.Factory[Texture, Config] 

@@ -2,8 +2,8 @@ package space.nexel.aether.js.graphics
 
 import org.scalajs.dom.raw.{WebGLRenderingContext => GL}
 import org.scalajs.dom.Image
-import space.nexel.aether.core.sys.Resource
-import space.nexel.aether.core.sys.Log
+import space.nexel.aether.core.platform.Resource
+import space.nexel.aether.core.platform.Log
 import space.nexel.aether.core.graphics.Texture
 import space.nexel.aether.core.graphics.Texture.*
 import space.nexel.aether.core.types.Vec2I

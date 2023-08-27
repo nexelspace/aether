@@ -1,4 +1,4 @@
-package space.nexel.aether.core.sys
+package space.nexel.aether.core.platform
 
 import space.nexel.aether.core.types.Vec2F
 import space.nexel.aether.core.types.Vec2I
@@ -7,7 +7,7 @@ import space.nexel.aether.core.graphics.Graphics
 
 object Display {
   type DisplayFactory = Resource.Factory[Display, Config]
-  
+
   case class Config(
       size: Vec2I = Vec2I(0),
       fullscreen: Boolean = false,

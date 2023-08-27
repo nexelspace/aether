@@ -1,7 +1,7 @@
 package space.nexel.aether.js.graphics
 
 import org.scalajs.dom.raw.{WebGLRenderingContext => GL}
-import space.nexel.aether.core.sys.Resource
+import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.graphics.ShaderProgram.*
 import space.nexel.aether.core.graphics.ShaderProgram
 
