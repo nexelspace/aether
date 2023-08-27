@@ -1,5 +1,6 @@
 package space.nexel.aether.core.math
-import space.nexel.aether.core.math.VMath
+
+import space.nexel.aether.core.types.Vec3F
 
 object VMathF extends VMath[Float] {
 

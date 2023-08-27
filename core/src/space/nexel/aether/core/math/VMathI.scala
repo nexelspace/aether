@@ -5,8 +5,8 @@ object VMathI extends VMath[Int] {
 
   val Zero = 0
   val One = 1
-  val Log2 = ??? //Math.log(2)
-  val Pi = ??? //Math.PI
+  def Log2 = ???
+  def Pi = ???
 
   // ---- Common
 

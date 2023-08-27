@@ -10,8 +10,8 @@ trait VMath[T] {
 
   val Zero: T
   val One: T
-  val Log2: T
-  val Pi: T
+  def Log2: T
+  def Pi: T
 
   // ---- Common
 
