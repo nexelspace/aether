@@ -9,9 +9,9 @@ object Apps {
   val platform = JvmPlatform()
 
   def launch(app: PlatformApp) = {
-    // platform.launch(app)
+    app.run()
   }
 
   @main
-  def canvas = launch(ShaderApp(platform))
+  def shader = launch(ShaderApp(platform))
 }
