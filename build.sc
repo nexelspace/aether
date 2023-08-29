@@ -36,7 +36,7 @@ object js extends ScalaJSModule {
 object jvm extends ScalaModule {
   def scalaVersion = scalaV
   // def scalacOptions = Seq("-Wunused:imports")
-  def moduleDeps = Seq(core)
+  def moduleDeps = Seq(core, app)
 
   def ivyDeps = {
     val lwjglVersion = "3.1.6"

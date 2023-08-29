@@ -1,4 +1,4 @@
-package space.nexel.aether.js.sys
+package space.nexel.aether.js.platform
 
 import org.scalajs.dom.XMLHttpRequest
 import scala.scalajs.js

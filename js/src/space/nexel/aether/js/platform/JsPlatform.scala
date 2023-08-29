@@ -1,4 +1,4 @@
-package space.nexel.aether.js.sys
+package space.nexel.aether.js.platform
 
 import space.nexel.aether.core.platform.Platform
 import space.nexel.aether.core.platform.Platform.Update
