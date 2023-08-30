@@ -1,11 +1,16 @@
-package space.nexel.aether.core.buffers
+package space.nexel.aether.core.graphics
 
 import ShaderBuffer._
+import space.nexel.aether.core.types.Num
+import space.nexel.aether.core.platform.*
+import space.nexel.aether.core.buffers.ElementBuffer
 
 /**
   * Shader data buffer.
   */
 object ShaderBuffer {
+  type ShaderBufferFactory = Resource.Factory[ShaderBuffer, ShaderBuffer.Config]
+
 //TODO
 //  sealed abstract class Target
 //  object Target {
@@ -71,15 +76,13 @@ object ShaderBuffer {
   }
 
   val defaultCapacity = 16
-
-  def create(flags: Int, capacity: Int): ShaderBuffer = {
-    assert(factory !=null, "Factory not initialized")
+  def apply(flags: Int, capacity: Int)(using graphics: Graphics): ShaderBuffer = {
     assert((flags & Size.Dynamic)!=0 || capacity>0)
     val cap = if (capacity==0) defaultCapacity else capacity
-    factory.create(Config(flags, cap))
+    graphics.shaderBufferFactory(Config(flags, cap))
   }
 
-  case class Config(flags: Int, capacity: Int) {
+  case class Config(flags: Int, capacity: Int) extends Resource.Config {
     val dataType: Num = ShaderBuffer.dataType(flags)
     //def target = flags & Target.Mask
     def dynamic = (flags & Size.Dynamic)!=0
@@ -91,8 +94,8 @@ object ShaderBuffer {
  * 
  * ShaderBuffer uses Buffer as underlying buffer interface.
  */
-abstract class ShaderBuffer(val config: Config) extends NativeObject[ShaderBuffer] with ElementBuffer {
-  final override protected def factory = ShaderBuffer.factory
+trait ShaderBuffer(val config: Config)
+    extends NativeResource[ShaderBuffer, ShaderBuffer.Config] with ElementBuffer {
 
   /** Element data type. */
   val dataType: Num

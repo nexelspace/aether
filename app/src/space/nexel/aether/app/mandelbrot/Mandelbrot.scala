@@ -11,9 +11,16 @@ import space.nexel.aether.core.input.PointerEvent.MouseMove
 import space.nexel.aether.core.input.PointerEvent.MouseWheel
 import space.nexel.aether.core.input.KeyEvent
 import space.nexel.aether.core.graphics.ShaderProgram
+import space.nexel.aether.core.graphics.ShaderBuffer.*
 import space.nexel.aether.core.graphics.Texture
 import space.nexel.aether.core.platform.Platform
 import space.nexel.aether.core.platform.Log
+import space.nexel.aether.app.lib.shaders.ShaderVarBuffer 
+import space.nexel.aether.core.graphics.ShaderProgram
+import space.nexel.aether.core.util.Colors
+import space.nexel.aether.core.graphics.Graphics
+import space.nexel.aether.lib.canvas.vertex.ShaderCanvas
+import space.nexel.aether.core.types.RectF
 
 object Mandelbrot {
 
@@ -27,6 +34,7 @@ object Mandelbrot {
 class Mandelbrot(val platform: Platform) extends Module {
 
   val display = platform.displayFactory(Display.Config(size = Config.dispSize))
+  given Graphics = display.graphics
 
   /** Select painter code. */
   lazy val painter = if (true) new ShaderPainter else new TexturePainter
@@ -83,7 +91,7 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   class ShaderPainter extends Painter {
-    val program = display.graphics.shaderProgramFactory(Shaders.vertex, Shaders.fragment)
+    val program = ShaderProgram.create(Shaders.vertex, Shaders.fragment)
     val vertexBuffer = ShaderVarBuffer(Target.Vertex | Type.Float, 6, 2)
 
     override def init() = {
@@ -100,20 +108,19 @@ class Mandelbrot(val platform: Platform) extends Module {
       program.uniform("iter").get.putI(iterations)
       program.uniform("scale").get.putF(scale)
       program.uniform("center").get.put2F(center)
-      Log.once("paint")
       program.draw(ShaderProgram.Mode.Triangles, 0, 6)
     }
   }
 
   class TexturePainter extends Painter {
-    val dispTex = Texture(Config.dispSize.x, Config.dispSize.y)
+    val dispTex = Texture.create(Config.dispSize.x, Config.dispSize.y)
 
     override def init() = {}
 
     override def paint() = {
       updateTexture()
-      Renderer.get.setTargetDisplay()
-      val canvas = VertexCanvas()
+      display.graphics.setTargetDisplay()
+      val canvas = ShaderCanvas()
       // canvas.begin()
       // canvas.clear(0)
       // canvas.transform { t =>
