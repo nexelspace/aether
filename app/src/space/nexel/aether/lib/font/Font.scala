@@ -7,16 +7,19 @@ import space.nexel.aether.core.types.RectI
 import space.nexel.aether.core.platform.Log
 import space.nexel.aether.core.base.Base
 import space.nexel.aether.core.base.Ref
+import space.nexel.aether.core.graphics.Graphics
+import space.nexel.aether.core.platform.Resource
+import space.nexel.aether.core.platform.Dispatcher
 
 object Font {
-  def load(base: Base, textureFile: String, configFile: String): Future[Font] = {
+  def load(base: Base, textureFile: String, configFile: String)(using g: Graphics, dispatcher: Dispatcher): Resource[Font] = {
     load(base.ref(textureFile), base.ref(configFile))
   }
 
-  def load(textureRef: Ref, configRef: Ref): Future[Font] = {
+  def load(textureRef: Ref, configRef: Ref)(using g: Graphics, dispatcher: Dispatcher): Resource[Font] = {
     for {
-      texture <- Texture.load(textureRef, Texture.Config(flags = Texture.Flag.Readable))
-      config <- configRef.load[String]()
+      texture <- g.textureFactory.load(textureRef, Texture.Config(flags = Texture.Flag.Readable))
+      config <- configRef.loadString()
     } yield create(texture, config)
   }
 

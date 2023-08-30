@@ -4,6 +4,7 @@ import org.scalajs.dom.raw.{WebGLRenderingContext => GL}
 import org.scalajs.dom.Image
 import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.platform.Log
+import space.nexel.aether.core.platform.Dispatcher
 import space.nexel.aether.core.graphics.Texture
 import space.nexel.aether.core.graphics.Texture.*
 import space.nexel.aether.core.types.Vec2I
@@ -13,7 +14,7 @@ object JsTexture {
     given TextureFactory = this
     def apply(config: Config) = new JsTexture(config.size.get)
 
-    override def load(url: String, config: Config)(onload: Resource[Texture] => _) = {
+    override def load(url: String, config: Config)(using dispatcher: Dispatcher) = {
       val resource = Resource[Texture]()
       val image = new Image()
       image.src = url
@@ -23,11 +24,9 @@ object JsTexture {
       def load() = {
         Log(s"Image $url loaded")
         resource.set(new JsTexture(image))
-        onload(resource)
       }
       def error() = {
         resource.error = s"Failed to load image $url"
-        onload(resource)
       }
       resource
     }

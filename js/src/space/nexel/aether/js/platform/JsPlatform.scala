@@ -3,9 +3,8 @@ package space.nexel.aether.js.platform
 import space.nexel.aether.core.platform.Platform
 import space.nexel.aether.core.platform.Platform.Update
 import space.nexel.aether.core.platform.Log
-import space.nexel.aether.core.platform.Display
+import space.nexel.aether.core.graphics.Display
 import space.nexel.aether.core.platform.Event
-import space.nexel.aether.core.platform.EventQueue
 import org.scalajs.dom
 
 class JsPlatform extends Platform {
@@ -15,9 +14,7 @@ class JsPlatform extends Platform {
     }
   }
 
-  val displayFactory = JsDisplay.factory
-
-  val events = new EventQueue()
+  val displayFactory = space.nexel.aether.js.graphics.JsDisplay.factory
 
   def run(handler: Event => Boolean): Unit = {
     def loop(time: Double): Unit = {

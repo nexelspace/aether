@@ -1,12 +1,11 @@
-package space.nexel.aether.lib.canvas.vertex
+package space.nexel.aether.lib.canvas.shader
 
-import aether.core.platform.shader.Texture
+import space.nexel.aether.core.graphics.Texture
 import TextureRenderer.*
-import aether.core.platform.shader.ShaderObject
-import aether.core.platform.shader.ShaderProgram
-import aether.core.platform.shader.Renderer
-import aether.lib.canvas_v1.MatUtil
-import aether.core.meta.Dev
+import space.nexel.aether.core.graphics.ShaderObject
+import space.nexel.aether.core.graphics.ShaderProgram
+import space.nexel.aether.core.graphics.Graphics
+import space.nexel.aether.lib.util.MatUtil
 
 object TextureRenderer {
   val header = """
@@ -48,34 +47,26 @@ void main()
 """
 
 
-  val vertShaderTex = ShaderObject.create(ShaderObject.Type.Vertex, vertex2D)
-  val fragShaderTex = ShaderObject.create(ShaderObject.Type.Fragment, fragment2D)
-  val programTex = ShaderProgram.create(vertShaderTex, fragShaderTex)
-
-  val buffer = VertexCanvas.buffer
 
 }
 
-case class TextureRenderer(texture: Texture) extends VertexCanvas.Renderer {
+case class TextureRenderer(shader: Shader, texture: Texture)(using g: Graphics) extends ShaderCanvas.Renderer {
 
   def begin() = {
-    buffer.vertex.clear()
-    buffer.texCoord.clear()
+    shader.buffer.vertex.clear()
+    shader.buffer.texCoord.clear()
   }
 
   def end() = {
-    val r = Renderer.get
     // Renderer.get.blend = if (blend != Blend.Normal) blend else if (statePremultiplied) Blend.NormalPremultiplied else Blend.Normal
-    val mvp = MatUtil.ortho(0, r.sizeX, if (r.isTargetDisplay) r.sizeY else -r.sizeY, 0)
+    val mvp = MatUtil.ortho(0, g.size.x, if (g.isTargetDisplay) g.size.y else -g.size.y, 0)
 
-    programTex.textureUnit(0, texture)
-    programTex.uniform("u_mvpMatrix").get.putMat4F(mvp)
-    programTex.attributeBuffer("a_position", buffer.vertex.buffer, buffer.vertex.numComponents)
+    shader.programTex.textureUnit(0, texture)
+    shader.programTex.uniform("u_mvpMatrix").get.putMat4F(mvp)
+    shader.programTex.attributeBuffer("a_position", shader.buffer.vertex.buffer, shader.buffer.vertex.numComponents)
     // programTex.attributeBuffer("a_color", colorBuffer.buffer, colorBuffer.numComponents)
-    programTex.attribute("a_color").get.put4F(1, 1, 1, 1)
-    programTex.attributeBuffer("a_texCoord", buffer.texCoord.buffer, buffer.texCoord.numComponents)
-    Dev.wrapThrowable(s"ShaderProgram.draw failed, buffer $buffer") {
-      programTex.draw(ShaderProgram.Mode.Triangles, 0, buffer.vertex.size)
-    }
+    shader.programTex.attribute("a_color").get.put4F(1, 1, 1, 1)
+    shader.programTex.attributeBuffer("a_texCoord", shader.buffer.texCoord.buffer, shader.buffer.texCoord.numComponents)
+    shader.programTex.draw(ShaderProgram.Mode.Triangles, 0, shader.buffer.vertex.size)
   }
 }

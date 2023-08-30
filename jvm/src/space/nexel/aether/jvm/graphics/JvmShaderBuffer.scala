@@ -1,14 +1,10 @@
 package aether.jvm.lwjgl
 
-import aether.core.platform.shader.ShaderBuffer
-import aether.core.platform.shader.ShaderBuffer.Config
-import aether.core.platform.shader.ShaderBuffer.Flag
-import aether.core.platform.shader.ShaderBuffer.Target
-import aether.core.platform.shader.ShaderBuffer.Type
+import space.nexel.aether.core.graphics.ShaderBuffer
+import space.nexel.aether.core.graphics.ShaderBuffer.*
 import space.nexel.aether.core.buffers.BufferWrapper
-import aether.core.platform.internal.NativeFactory
-import aether.core.util.Strings
-import aether.jvm.buffers.JvmBuffer
+import space.nexel.aether.core.util.Strings
+import space.nexel.aether.jvm.buffers.JvmBuffer
 import org.lwjgl.opengl.GL11._
 import org.lwjgl.opengl.GL13._
 import org.lwjgl.opengl.GL15._
@@ -21,18 +17,23 @@ import org.lwjgl.opengl.GL43._
 import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import space.nexel.aether.core.platform.Platform
+import space.nexel.aether.core.platform.Resource
+import space.nexel.aether.core.graphics.Display.DisplayFactory
+import space.nexel.aether.core.graphics.Display
 
-object NShaderBuffer extends NativeFactory[ShaderBuffer, ShaderBuffer.Config](true) {
+object JvmShaderBuffer {
 
   val array = new Array[Float](16)
 
-  override def createThis(config: ShaderBuffer.Config): ShaderBuffer = {
-    new NShaderBuffer(config)
+  def factory = new ShaderBufferFactory {
+    given ShaderBufferFactory = this
+    def apply(config: Config) = new JvmShaderBuffer(config)
   }
+
 }
 
-class NShaderBuffer(config: Config) extends ShaderBuffer(config) with BufferWrapper {
- NRenderer.assertInitialized()
+class JvmShaderBuffer(config: Config)(using factory: ShaderBufferFactory) extends ShaderBuffer(config) with BufferWrapper {
 
   override val dataType = config.dataType
   override val target = config.flags & Target.Mask
@@ -47,11 +48,11 @@ class NShaderBuffer(config: Config) extends ShaderBuffer(config) with BufferWrap
   //  override def getD(): Double = buffer.getD()
 
   override def resizeBuffer(size: Int): Unit = {
-   assert(config.dynamic)
-   buffer.resizeBuffer(size)
- }
+    assert(config.dynamic)
+    buffer.resizeBuffer(size)
+  }
 
-  //TODO
+  // TODO
   override def size = (if (readMode) buffer.buffer.limit() else buffer.buffer.position())
 
   override def clear() = {
@@ -75,7 +76,7 @@ class NShaderBuffer(config: Config) extends ShaderBuffer(config) with BufferWrap
   } else {
     None
   }
-  
+
   val glTarget = target match {
     case Target.Vertex  => GL_ARRAY_BUFFER
     case Target.Index   => GL_ELEMENT_ARRAY_BUFFER
@@ -94,8 +95,9 @@ class NShaderBuffer(config: Config) extends ShaderBuffer(config) with BufferWrap
     case Type.Float  => GL_FLOAT
   }
 
-  def releaseThis() = {
-    //SystemObject.destroy(this, objects)
+  def release() = {
+    // SystemObject.destroy(this, objects)
+    factory.released(this)
     glDeleteBuffers(Array(glBufferId))
   }
 
@@ -105,8 +107,8 @@ class NShaderBuffer(config: Config) extends ShaderBuffer(config) with BufferWrap
       readMode = true
       buffer.flip()
       buffer.buffer match {
-        case b: ByteBuffer => glBufferData(glTarget, b, GL_DYNAMIC_DRAW)
-        case b: IntBuffer => glBufferData(glTarget, b, GL_DYNAMIC_DRAW)
+        case b: ByteBuffer  => glBufferData(glTarget, b, GL_DYNAMIC_DRAW)
+        case b: IntBuffer   => glBufferData(glTarget, b, GL_DYNAMIC_DRAW)
         case b: FloatBuffer => glBufferData(glTarget, b, GL_DYNAMIC_DRAW)
         case b =>
           val t = b.getClass.getName
@@ -115,7 +117,7 @@ class NShaderBuffer(config: Config) extends ShaderBuffer(config) with BufferWrap
     }
   }
 
-  //def size() = components*buffer.remaining()
+  // def size() = components*buffer.remaining()
 
   override def toString(): String = {
     s"[$dataType-${config.flags.toHexString}, $buffer]"

@@ -1,14 +1,14 @@
-package space.nexel.aether.lib.canvas.vertex
+package space.nexel.aether.lib.canvas.shader
 
-import aether.core.platform.shader.ShaderBuffer.Flag
-import aether.core.platform.shader.ShaderBuffer.Size
-import aether.core.platform.shader.ShaderBuffer.Target
-import aether.core.platform.shader.ShaderBuffer.Type
-import aether.lib.shaders.ShaderVarBuffer
-import aether.core.types.RectF
-import aether.core.types.Color
+import space.nexel.aether.core.graphics.ShaderBuffer.Flag
+import space.nexel.aether.core.graphics.ShaderBuffer.Size
+import space.nexel.aether.core.graphics.ShaderBuffer.Target
+import space.nexel.aether.core.graphics.ShaderBuffer.Type
+import space.nexel.aether.core.types.RectF
+import space.nexel.aether.core.graphics.Graphics
+import space.nexel.aether.core.types.Color
 
-class RenderBuffer(size: Int) {
+class RenderBuffer(size: Int)(using g: Graphics) {
   val vertex = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.Float, size, 3)
   val colors = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.UByte | Flag.Normalize, size, 4)
   val texCoord = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.Float, size, 2)

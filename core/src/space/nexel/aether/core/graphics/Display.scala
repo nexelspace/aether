@@ -1,9 +1,13 @@
-package space.nexel.aether.core.platform
+package space.nexel.aether.core.graphics
 
 import space.nexel.aether.core.types.Vec2F
 import space.nexel.aether.core.types.Vec2I
 
 import space.nexel.aether.core.graphics.Graphics
+import space.nexel.aether.core.platform.Resource
+import space.nexel.aether.core.platform.Event
+import space.nexel.aether.core.platform.NativeResource
+import space.nexel.aether.core.graphics.Graphics.RenderTarget
 
 object Display {
   type DisplayFactory = Resource.Factory[Display, Config]
@@ -23,12 +27,12 @@ object Display {
   case class Resize(display: Display, size: Vec2I) extends DisplayEvent
 }
 
-trait Display extends NativeResource[Display, Display.Config] {
+trait Display extends NativeResource[Display, Display.Config] with RenderTarget {
   def graphics: Graphics
   def size: Vec2I
 
   def grabPointer(grab: Boolean): Unit
 
-  // def render(callback: => Unit): Unit
+  def render(callback: (Display) => Unit): Unit
 
 }

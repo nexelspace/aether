@@ -5,7 +5,7 @@ import space.nexel.aether.core.types.Vec2I
 import space.nexel.aether.core.types.Vec2F
 import space.nexel.aether.core.platform.Event
 import space.nexel.aether.core.platform.Module
-import space.nexel.aether.core.platform.Display
+import space.nexel.aether.core.graphics.Display
 import space.nexel.aether.core.input.PointerEvent.MouseButton
 import space.nexel.aether.core.input.PointerEvent.MouseMove
 import space.nexel.aether.core.input.PointerEvent.MouseWheel
@@ -15,11 +15,11 @@ import space.nexel.aether.core.graphics.ShaderBuffer.*
 import space.nexel.aether.core.graphics.Texture
 import space.nexel.aether.core.platform.Platform
 import space.nexel.aether.core.platform.Log
-import space.nexel.aether.app.lib.shaders.ShaderVarBuffer 
+import space.nexel.aether.lib.canvas.shader.ShaderVarBuffer 
 import space.nexel.aether.core.graphics.ShaderProgram
 import space.nexel.aether.core.util.Colors
 import space.nexel.aether.core.graphics.Graphics
-import space.nexel.aether.lib.canvas.vertex.ShaderCanvas
+import space.nexel.aether.lib.canvas.shader.ShaderCanvas
 import space.nexel.aether.core.types.RectF
 
 object Mandelbrot {
@@ -119,8 +119,8 @@ class Mandelbrot(val platform: Platform) extends Module {
 
     override def paint() = {
       updateTexture()
-      display.graphics.setTargetDisplay()
-      val canvas = ShaderCanvas()
+      display.graphics.setTargetDisplay(display)
+      val canvas = ShaderCanvas(display.size)
       // canvas.begin()
       // canvas.clear(0)
       // canvas.transform { t =>

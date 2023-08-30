@@ -1,4 +1,4 @@
-package space.nexel.aether.app.lib.shaders
+package space.nexel.aether.lib.canvas.shader
 
 import space.nexel.aether.core.graphics.*
 import space.nexel.aether.core.buffers.*

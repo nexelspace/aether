@@ -8,6 +8,7 @@ import space.nexel.aether.core.types.Num
 import space.nexel.aether.core.buffers.NativeBuffer
 import space.nexel.aether.core.internal.FlagFactory
 import space.nexel.aether.core.internal.FlagOps
+import space.nexel.aether.core.graphics.Graphics.RenderTarget
 
 object Texture {
   type TextureFactory = Resource.Factory[Texture, Config]
@@ -76,7 +77,7 @@ object Texture {
       flags: TextureFlag = 0,
       format: Format = Format.RGBA_8888,
       fileFormat: FileFormat = FileFormat.UNDEFINED,
-      size: Option[Vec2I],
+      size: Option[Vec2I] = None,
       argb: Option[Array[Int]] = None,
       data: Option[Array[Byte]] = None,
       buffer: Option[NativeBuffer] = None
@@ -87,7 +88,8 @@ object Texture {
   }
 }
 
-trait Texture extends NativeResource[Texture, Texture.Config] {
+trait Texture extends NativeResource[Texture, Texture.Config] with RenderTarget {
+  val config: Texture.Config
   def size: Vec2I
   def area = RectI(0, 0, size.x, size.y)
 
@@ -95,7 +97,6 @@ trait Texture extends NativeResource[Texture, Texture.Config] {
 
   /** Direct buffer access. */
   def buffer: Option[NativeBuffer]
-  def bufferModified(): Unit
 
   def getARGB(x: Int, y: Int): Int
 
@@ -117,7 +118,43 @@ trait Texture extends NativeResource[Texture, Texture.Config] {
 
   // def encode(target: DataBuffer.Write, format: Texture.FileFormat, flags: Int): Unit
 
-  /** Is texure alpha-premultiplied. */
-  // def isPremultiplied: Boolean
-  // def isRenderTarget = true
+  def isPremultiplied = config.flags.has(Texture.Flag.Premultiplied)
+  def isRenderTarget = config.flags.has(Texture.Flag.RenderTarget)
+  val isReadable = config.flags.has(Texture.Flag.Readable)
+  val isWritable = config.flags.has(Texture.Flag.Writable)
+  val hasMipmaps = config.flags.has(Texture.Flag.Mipmap)
+
+  // -----
+
+
+  /** Texture internal buffer has been modified and needs to be updated to actual texture. */
+  protected var modified = false
+   /** Texture has been modified by rendering, internal buffer is out of sync. */
+  protected var rendered = false
+
+  protected def nativeBuffer = buffer.get
+
+  lazy val pixelWriter = TextureOps.argbWriter(nativeBuffer, format, isPremultiplied)
+  lazy val pixelReader = TextureOps.argbReader(nativeBuffer, format)
+
+  def bufferModified() = {
+    modified = true
+  }
+
+  def prepareRenderTarget() = {
+    prepareRender()
+    rendered = true
+  }
+
+  protected def prepareRender() = {
+    synchronized {
+      if (modified) {
+        modified = false
+        nativeBuffer.position = 0
+        upload()
+      }
+    }
+  }
+
+  def upload(): Unit
 }

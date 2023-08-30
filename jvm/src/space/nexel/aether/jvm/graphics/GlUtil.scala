@@ -18,6 +18,7 @@ import org.lwjgl.opengles.OESCompressedETC1RGB8Texture.*
 import scala.util.Failure
 import scala.util.Success
 import scala.util.Try
+import space.nexel.aether.core.graphics.Texture.Format
 
 object GlUtil {
 
@@ -39,62 +40,62 @@ object GlUtil {
       })
   }
   
-//   def toGlPixelFormat(format: Format): Int = format match {
-//     case Format.RGBA_8888   => GL_RGBA
-// //    case Format.LUMINANCE_8 => GL_LUMINANCE
-// //    case Format.BGRA_8888   => GL_BGRA
-// //    case Format.BGR_888     => GL_BGR
-// //    case Format.RGB_888     => GL_RGB
-// //    case Format.DEPTH_16    => GL_DEPTH_COMPONENT16
-// //    case Format.DEPTH_24    => GL_DEPTH_COMPONENT24
-// //    case Format.DEPTH_32    => GL_DEPTH_COMPONENT32
-// //    case Format.DEPTH_32F   => GL_DEPTH_COMPONENT32F
-//     case _                  => assert(false, s"Unsupported pixel format: $format"); 0
-//   }
+  def toGlPixelFormat(format: Format): Int = format match {
+    case Format.RGBA_8888   => GL_RGBA
+//    case Format.LUMINANCE_8 => GL_LUMINANCE
+//    case Format.BGRA_8888   => GL_BGRA
+//    case Format.BGR_888     => GL_BGR
+//    case Format.RGB_888     => GL_RGB
+//    case Format.DEPTH_16    => GL_DEPTH_COMPONENT16
+//    case Format.DEPTH_24    => GL_DEPTH_COMPONENT24
+//    case Format.DEPTH_32    => GL_DEPTH_COMPONENT32
+//    case Format.DEPTH_32F   => GL_DEPTH_COMPONENT32F
+    case _                  => assert(false, s"Unsupported pixel format: $format"); 0
+  }
 
-//   def toGlInternalFormat(format: Format): Int = format match {
-//     case Format.R32UI          =>  GL_R32UI //GL_RED
-//     case Format.RGBA_8888      => GL_RGBA
-//     case Format.RGBA_8888_UI    => GL_RGBA8UI
-// //    case Format.LUMINANCE_8    => GL_LUMINANCE
-// //    case Format.RG_16          => GL_RG
-// //    case Format.BGRA_8888      => GL_RGBA
-// //    case Format.BGR_888        => GL_RGB
-// //    case Format.RGB_888        => GL_RGB
-// //    case Format.SRGB_888       => GL_SRGB
-// //    case Format.DEPTH_16       => GL_RGB
-// //    case Format.DEPTH_24       => GL_RGB
-// //    case Format.DEPTH_32       => GL_RGB
-// //    case Format.DEPTH_32F      => GL_DEPTH_COMPONENT
-// //    case Format.ETC1           => GL_ETC1_RGB8_OES
-// //    case Format.PVRTC_4BIT     => GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG
-// //    case Format.PVRTC_2BIT     => GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG
-// //    case Format.PVRTC_4BIT_RGB => GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG
-// //    case Format.PVRTC_2BIT_RGB => GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG
-// //    case Format.DXT1           => GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
-// //    case Format.DXT3           => GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
-// //    case Format.DXT5           => GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
-//     case _                     => sys.error(s"Unsupported pixel format: $format")
-//   }
+  def toGlInternalFormat(format: Format): Int = format match {
+    case Format.R32UI          =>  GL_R32UI //GL_RED
+    case Format.RGBA_8888      => GL_RGBA
+    case Format.RGBA_8888_UI    => GL_RGBA8UI
+//    case Format.LUMINANCE_8    => GL_LUMINANCE
+//    case Format.RG_16          => GL_RG
+//    case Format.BGRA_8888      => GL_RGBA
+//    case Format.BGR_888        => GL_RGB
+//    case Format.RGB_888        => GL_RGB
+//    case Format.SRGB_888       => GL_SRGB
+//    case Format.DEPTH_16       => GL_RGB
+//    case Format.DEPTH_24       => GL_RGB
+//    case Format.DEPTH_32       => GL_RGB
+//    case Format.DEPTH_32F      => GL_DEPTH_COMPONENT
+//    case Format.ETC1           => GL_ETC1_RGB8_OES
+//    case Format.PVRTC_4BIT     => GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG
+//    case Format.PVRTC_2BIT     => GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG
+//    case Format.PVRTC_4BIT_RGB => GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG
+//    case Format.PVRTC_2BIT_RGB => GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG
+//    case Format.DXT1           => GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
+//    case Format.DXT3           => GL_COMPRESSED_RGBA_S3TC_DXT3_EXT
+//    case Format.DXT5           => GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
+    case _                     => sys.error(s"Unsupported pixel format: $format")
+  }
 
-//   def toGlFormat(format: Format): Int = format match {
-//     case Format.R32UI          =>  GL_RED_INTEGER
-//     case Format.RGBA_8888      => GL_RGBA
-//     case Format.RGBA_8888_UI   => GL_RGBA_INTEGER
-//     case _                     => sys.error(s"Unimplemented for $format")
-//   }
+  def toGlFormat(format: Format): Int = format match {
+    case Format.R32UI          =>  GL_RED_INTEGER
+    case Format.RGBA_8888      => GL_RGBA
+    case Format.RGBA_8888_UI   => GL_RGBA_INTEGER
+    case _                     => sys.error(s"Unimplemented for $format")
+  }
 
-//   def getComponentType(format: Format) = format match {
-//     case Format.RGBA_8888 => GL_UNSIGNED_BYTE
-//     case Format.R32UI     => GL_UNSIGNED_INT
-//     case Format.RGBA_8888_UI     => GL_UNSIGNED_BYTE
-// //    case Format.DEPTH_16  => GL_UNSIGNED_SHORT
-// //    case Format.DEPTH_24  => GL_UNSIGNED_INT
-// //    case Format.DEPTH_32  => GL_UNSIGNED_INT
-// //    case Format.DEPTH_32F => GL_FLOAT
-// //    case Format.RG_16     => GL_UNSIGNED_SHORT
-//     case _                => sys.error(s"Unimplemented for $format")
-//   }
+  def getComponentType(format: Format) = format match {
+    case Format.RGBA_8888 => GL_UNSIGNED_BYTE
+    case Format.R32UI     => GL_UNSIGNED_INT
+    case Format.RGBA_8888_UI     => GL_UNSIGNED_BYTE
+//    case Format.DEPTH_16  => GL_UNSIGNED_SHORT
+//    case Format.DEPTH_24  => GL_UNSIGNED_INT
+//    case Format.DEPTH_32  => GL_UNSIGNED_INT
+//    case Format.DEPTH_32F => GL_FLOAT
+//    case Format.RG_16     => GL_UNSIGNED_SHORT
+    case _                => sys.error(s"Unimplemented for $format")
+  }
 
   val constantTypeIndex: Map[Int, String] = Map(
     GL_FLOAT -> "GL_FLOAT",

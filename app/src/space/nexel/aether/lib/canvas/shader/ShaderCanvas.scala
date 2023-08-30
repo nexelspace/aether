@@ -1,26 +1,18 @@
-package space.nexel.aether.lib.canvas.vertex
+package space.nexel.aether.lib.canvas.shader
 
-import aether.core.Log
-import aether.core.platform.shader.ShaderObject
-import aether.core.platform.shader.ShaderProgram
-import aether.core.platform.shader.Texture
-import aether.core.types.RectF
+import space.nexel.aether.core.types.RectF
 import space.nexel.aether.core.types.Vec2F
 import space.nexel.aether.core.types.Vec2I
-import aether.lib.canvas.Canvas
-import aether.lib.canvas_v1.MatUtil
-import aether.lib.graphics.Font
-import aether.lib.graphics.Visual
-import aether.lib.shaders.ShaderVarBuffer
-import aether.core.platform.shader
+import space.nexel.aether.lib.canvas.Canvas
+import space.nexel.aether.lib.font.Font
 
 import ShaderCanvas._
-import aether.core.types.Tx2FAxis
-import aether.core.platform.shader.Display
+import space.nexel.aether.core.graphics.Graphics
+import space.nexel.aether.core.graphics.Display
+import space.nexel.aether.lib.types.Tx2FAxis
+import space.nexel.aether.core.graphics.Texture
 
 object ShaderCanvas {
-
-  val buffer = new RenderBuffer(1024)
 
   val color = 0xffffffff
 
@@ -29,14 +21,18 @@ object ShaderCanvas {
     def end(): Unit
   }
 
-  def apply(): ShaderCanvas = {
-    new ShaderCanvas(RectF(Vec2F.Zero, Display.primary.size.toVec2F))
+  def apply(viewport: Vec2I)(using g: Graphics): ShaderCanvas = {
+    new ShaderCanvas(RectF(Vec2F.Zero, viewport.toVec2F))
   }
  
 }
 
-class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity) extends Canvas {
+class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity)(using g: Graphics) extends Canvas {
 
+  val buffer = new RenderBuffer(1024)
+
+  val primitiveShader = new Shader(buffer, PrimitiveRenderer.vertex2D, PrimitiveRenderer.fragment2D)
+  val textureShader = new Shader(buffer, TextureRenderer.vertex2D, TextureRenderer.fragment2D)
 
   var renderer: Option[Renderer] = None
 
@@ -62,19 +58,19 @@ class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity) extend
   }
 
   def clear(argb: Int): Unit = {
-    useRenderer(new PrimitiveRenderer())
+    useRenderer(PrimitiveRenderer(primitiveShader))
     fillRect(view, argb)
   }
 
   // -- rendering methods
 
   def drawTexture(area: RectF, texture: Texture): Unit = {
-    useRenderer(new TextureRenderer(texture))
+    useRenderer(new TextureRenderer(textureShader, texture))
     buffer.putTexture(tx.transformArea(area), RectF.unit)
   }
 
   def drawString(pos: Vec2F, font: Font, string: String): Unit = {
-    useRenderer(new TextureRenderer(font.texture))
+    useRenderer(new TextureRenderer(textureShader, font.texture))
     var cx = 0
     for (c <- string) {
       if (font.hasChar(c)) {
@@ -88,7 +84,7 @@ class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity) extend
   }
 
   def fillRect(area: RectF, color: Int): Unit = {
-    useRenderer(new PrimitiveRenderer())
+    useRenderer(new PrimitiveRenderer(primitiveShader))
     buffer.putVertices(buffer.vertex, tx.transformArea(area))
     buffer.putColor(color, 6)
   }

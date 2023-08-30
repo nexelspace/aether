@@ -1,8 +1,8 @@
-package space.nexel.aether.js.platform
+package space.nexel.aether.js.graphics
 
-import space.nexel.aether.core.platform.Display
+import space.nexel.aether.core.graphics.Display
 import space.nexel.aether.core.platform.Resource
-import space.nexel.aether.core.platform.Display.*
+import space.nexel.aether.core.graphics.Display.*
 import space.nexel.aether.js.graphics.JsGraphics
 import org.scalajs.dom.HTMLCanvasElement
 import org.scalajs.dom.raw.{WebGLRenderingContext => GL}

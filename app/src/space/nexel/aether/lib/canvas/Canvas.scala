@@ -5,9 +5,9 @@ import space.nexel.aether.core.types.Vec2I
 
 import Canvas.*
 import space.nexel.aether.core.types.RectF
-import space.nexel.aether.core.graphics.Texture.TextureFactory
 import space.nexel.aether.lib.types.Tx2FAxis
 import space.nexel.aether.lib.font.Font
+import space.nexel.aether.core.graphics.Texture
 
 object Canvas {
   // case class Render(canvas: Canvas, view: RectF) extends Event
@@ -53,7 +53,7 @@ trait Canvas {
   // }
   def fillRect(area: RectF, color: Int): Unit
 
-  def drawTexture(area: RectF, texture: TextureFactory): Unit
+  def drawTexture(area: RectF, texture: Texture): Unit
 
   def drawString(pos: Vec2F, font: Font, string: String): Unit
 

@@ -1,7 +1,7 @@
 package space.nexel.aether.jvm.graphics
 
-import space.nexel.aether.core.platform.Display
-import space.nexel.aether.core.platform.Display.*
+import space.nexel.aether.core.graphics.Display
+import space.nexel.aether.core.graphics.Display.*
 import space.nexel.aether.core.platform.Platform
 import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.graphics.Graphics
@@ -19,9 +19,9 @@ import space.nexel.aether.core.types.Vec2I
 
 object JvmDisplay {
 
-  def factory(platform: Platform, inputHandler: InputHandler) = new Resource.Factory[Display, Config] {
+  def factory(platform: Platform) = new Resource.Factory[Display, Config] {
     given DisplayFactory = this
-    def apply(config: Config) = new JvmDisplay(platform, config, inputHandler)
+    def apply(config: Config) = new JvmDisplay(platform, config)
   }
 
   private var graphics: Graphics = null
@@ -35,9 +35,9 @@ object JvmDisplay {
   }
 }
 
-class JvmDisplay(platform: Platform, config: Config, input: InputHandler)(using factory: DisplayFactory)
+class JvmDisplay(platform: Platform, config: Config)(using factory: DisplayFactory)
     extends Display
-    with NativeResource[Display, Config] {
+    /*with NativeResource[Display, Config]*/ {
   JvmDisplay.init()
   val graphics = JvmDisplay.graphics
 
@@ -55,7 +55,7 @@ class JvmDisplay(platform: Platform, config: Config, input: InputHandler)(using 
   if (window == NULL)
     throw new RuntimeException("Failed to create the GLFW window")
 
-  new DisplayInput(this, input)
+  new DisplayInput(this, platform.dispatcher)
 
   // Get the thread stack and push a new frame
   GlUtil.autoCloseTry(stackPush()) { stack =>
@@ -79,6 +79,10 @@ class JvmDisplay(platform: Platform, config: Config, input: InputHandler)(using 
 
   /** Pointer grabbed / locked. */
   var pointerGrab = false
+
+  def render(callback: Display => Unit): Unit = {
+    graphics.render(this, callback)
+  }
 
   def release() = {
     factory.released(this)
@@ -105,7 +109,7 @@ class JvmDisplay(platform: Platform, config: Config, input: InputHandler)(using 
   def render(callback: => Unit) = {
     glfwPollEvents()
     if (glfwWindowShouldClose(window)) {
-      //TODO
+      // TODO
       // platform.exit()
     }
     callback
