@@ -7,6 +7,10 @@ import space.nexel.aether.core.graphics.Graphics.*
 
 class JsGraphics(val gl: GL) extends Graphics {
   given GL = gl
+  val shaderProgramFactory = JsShaderProgram.factory
+  val shaderObjectFactory = JsShaderObject.factory
+  val shaderBufferFactory = JsShaderBuffer.factory
+  val textureFactory = JsTexture.factory(this)
 
   var target: RenderTarget = _
 

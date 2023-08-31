@@ -26,7 +26,6 @@ import scala.scalajs.js.annotation.JSExportTopLevel
 import scala.scalajs.js.typedarray.TypedArray
 import scala.scalajs.js.typedarray.Uint8Array
 import scala.scalajs.js.typedarray.Uint8ClampedArray
-import space.nexel.aether.core.platform.Platform
 
 object JsTexture {
 
@@ -35,8 +34,8 @@ object JsTexture {
 
   lazy val copyCanvas = dom.document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
 
-  def factory(using platform: Platform) = new TextureFactory {
-    // given Graphics = g
+  def factory(g: Graphics) = new TextureFactory {
+    given Graphics = g
     given TextureFactory = this
 
     override def loadThis(ref: Ref, config: Config)(using dispatcher: Dispatcher) = {
@@ -128,14 +127,14 @@ object JsTexture {
 
 }
 
-class JsTexture(val config: Config)(using platform: Platform, factory: TextureFactory) extends Texture {
+class JsTexture(val config: Config)(using graphics: Graphics, factory: TextureFactory) extends Texture {
 
   override val format = config.format
 
   // def this(image: Image)(using factory: TextureFactory, gl: GL) = {
   //   this(Vec2I(image.width, image.height))
   // }
-  val gl = platform.graphics.asInstanceOf[JsGraphics].gl
+  val gl = graphics.asInstanceOf[JsGraphics].gl
 
   val glTexture = gl.createTexture()
 
@@ -175,7 +174,7 @@ class JsTexture(val config: Config)(using platform: Platform, factory: TextureFa
     prepareRender()
     gl.activeTexture(GL.TEXTURE0 + textureIndex)
     gl.bindTexture(GL.TEXTURE_2D, glTexture)
-    val filter = platform.graphics.filter
+    val filter = graphics.filter
     if (filter == Graphics.Filter.Linear) {
       gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR)
       gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, if (hasMipmaps) GL.LINEAR_MIPMAP_LINEAR else GL.LINEAR)

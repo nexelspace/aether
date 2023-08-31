@@ -5,7 +5,6 @@ import space.nexel.aether.core.graphics.ShaderObject
 import space.nexel.aether.core.graphics.ShaderProgram
 import space.nexel.aether.lib.util.MatUtil
 import space.nexel.aether.core.graphics.Graphics
-import space.nexel.aether.core.platform.Platform
 
 object PrimitiveRenderer {
   val header = """
@@ -40,10 +39,10 @@ void main (void)
 
 }
 
-case class PrimitiveRenderer(shader: Shader)(using platform: Platform) extends ShaderCanvas.Renderer {
-  val vertShaderPrim = ShaderObject(ShaderObject.Type.Vertex, vertex2D)
-  val fragShaderPrim = ShaderObject(ShaderObject.Type.Fragment, fragment2D)
-  val programPrim = ShaderProgram(vertShaderPrim, fragShaderPrim)
+case class PrimitiveRenderer(shader: Shader)(using g: Graphics) extends ShaderCanvas.Renderer {
+  val vertShaderPrim = ShaderObject.create(ShaderObject.Type.Vertex, vertex2D)
+  val fragShaderPrim = ShaderObject.create(ShaderObject.Type.Fragment, fragment2D)
+  val programPrim = ShaderProgram.create(vertShaderPrim, fragShaderPrim)
 
   def begin() = {
     shader.buffer.vertex.buffer.clear()
@@ -54,7 +53,6 @@ case class PrimitiveRenderer(shader: Shader)(using platform: Platform) extends S
   def end() = if (shader.buffer.vertex.position > 0) {
     // Renderer.get.blend = Blend.NormalPremultiplied
     // Renderer.get.blend = if (blend != Blend.Normal) blend else if (statePremultiplied) Blend.NormalPremultiplied else Blend.Normal
-    val g = platform.graphics
     val mvp = MatUtil.ortho(0, g.size.x, if (g.isTargetDisplay) g.size.y else -g.size.y, 0)
 
     val buffer = shader.buffer
