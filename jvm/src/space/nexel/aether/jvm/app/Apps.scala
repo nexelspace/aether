@@ -3,7 +3,7 @@ package space.nexel.aether.jvm.app
 import space.nexel.aether.jvm.platform.JvmPlatform
 import space.nexel.aether.core.platform.Module
 import space.nexel.aether.app.shader.ShaderApp
-import aether.app.fractal.Mandelbrot
+import space.nexel.aether.app.mandelbrot.Mandelbrot
 
 object Apps {
 

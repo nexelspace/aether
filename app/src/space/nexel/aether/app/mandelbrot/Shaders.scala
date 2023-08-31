@@ -1,4 +1,4 @@
-package aether.app.fractal
+package space.nexel.aether.app.mandelbrot
 
 object Shaders {
 

@@ -1,17 +1,28 @@
 package space.nexel.aether.core.platform
 import space.nexel.aether.core.graphics.Display
+import space.nexel.aether.core.base.*
 
 object Platform {
   case class Update(time: Long) extends Event
 }
 
 trait Platform(modules: Seq[Module]) {
-  def log: Log
 
-  // Factories
   val displayFactory: Resource.Factory[Display, Display.Config]
 
   val dispatcher: Dispatcher = new Dispatcher()
+  given Dispatcher = dispatcher
+
+  def log: Log
+  def base: Base
+
+  def resource(source: Any): Base = {
+    //TODO
+    val path = source.getClass().getName().split("\\.").dropRight(1).mkString("/")
+    val nb = s"app/src/$path"
+    Log(s"Resource base $nb")
+    base.base(nb)
+  }
 
   // Initialize system modules before instantiating App
   init()

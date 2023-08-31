@@ -8,6 +8,13 @@ val http4sV = "1.0.0-M38"
 
 object core extends ScalaModule {
   def scalaVersion = scalaV
+
+  def ivyDeps = Agg(
+    ivy"io.circe::circe-core::$circeV",
+    ivy"io.circe::circe-generic::$circeV",
+    ivy"io.circe::circe-parser::$circeV",
+  )
+
 }
 
 object app extends ScalaModule {
@@ -25,7 +32,7 @@ object js extends ScalaJSModule {
 
   // must include dependencies from api & core projects
   def ivyDeps = Agg(
-    ivy"io.lemonlabs::scala-uri:4.0.3",
+//    ivy"io.lemonlabs::scala-uri:4.0.3",
     ivy"io.circe::circe-core::$circeV",
     ivy"io.circe::circe-generic::$circeV",
     ivy"io.circe::circe-parser::$circeV",

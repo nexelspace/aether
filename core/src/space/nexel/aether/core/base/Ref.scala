@@ -10,7 +10,9 @@ case class Ref(base: Base, segments: Seq[String]) {
   def path: String = segments.mkString("/")
   def toUrl: String = base.toUrl(this.path)
 
-  def loadString(): Resource[String] = base.loadString(this.path)
-  def loadByteBuffer(): Resource[ByteBuffer] = base.loadByteBuffer(path)
-  
+  def loadString() = base.loadString(this.path)
+  // def loadTexture() = base.loadTexture(this.path)
+  def loadBytes() = base.loadBytes(this.path)
+  def loadJson() = base.loadJson(this.path)
+
 }

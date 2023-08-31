@@ -1,5 +1,8 @@
 package space.nexel.aether.js.platform
 
+import space.nexel.aether.core.network.HttpClient
+import space.nexel.aether.core.platform.*
+import space.nexel.aether.core.graphics.Texture
 import org.scalajs.dom.XMLHttpRequest
 import scala.scalajs.js
 
@@ -13,51 +16,48 @@ import io.circe.parser._
 
 object JsHttpClient {
 
-  def loadBytes(url: String): Future[Array[Byte]] = new Loader(url).loadBytes()
-  def loadJson(url: String): Future[js.Object] = new Loader(url).loadJson()
-  def loadHeaders(url: String): Future[Map[String, String]] = new Loader(url).loadHeaders()
+  def loadBytes(url: String)(using dispatcher: Dispatcher) : Resource[Array[Byte]] = new Loader(url).loadBytes()
+  def loadJson(url: String)(using dispatcher: Dispatcher) : Resource[Json] = new Loader(url).loadJson()
+  def loadHeaders(url: String)(using dispatcher: Dispatcher) : Resource[Map[String, String]] = new Loader(url).loadHeaders()
 
   import scala.scalajs.js.typedarray._
 
-  class Loader(url: String) {
+  class Loader(url: String)(using dispatcher: Dispatcher) {
     val req = new XMLHttpRequest()
-    def error[A](promise: Promise[A]) =
-      promise.failure(new RuntimeException(s"Failed to load $url - ${req.status} ${req.statusText}"))
+    def error = s"Failed to load $url - ${req.status} ${req.statusText}"
 
-    def loadBytes(): Future[Array[Byte]] = {
-      var promise = Promise[Array[Byte]]()
+    def loadBytes(): Resource[Array[Byte]] = {
+      val res = new Resource[Array[Byte]]
       req.open("GET", url, true)
       req.responseType = "arraybuffer"
       req.onload = { event =>
         if (req.status == 200) {
           val array = int8Array2ByteArray(new Int8Array(req.response.asInstanceOf[ArrayBuffer]))
-          promise.success(array)
-        } else error(promise)
+          res.set(array)
+        } else res.error = error
       }
-      req.onerror = { event => error(promise) }
+      req.onerror = { event => res.error = error }
       req.send()
-      promise.future
-
+      res
     }
 
-    def loadJson(): Future[js.Object] = {
-      var promise = Promise[js.Object]()
+    def loadJson(): Resource[Json] = {
+      val res = new Resource[Json]
       req.open("GET", url, true)
       req.responseType = "json"
       req.onload = { event =>
         if (req.status == 200) {
-          val json = req.response.asInstanceOf[js.Object]
-          promise.success(json)
-        } else error(promise)
+          val json = req.response.asInstanceOf[Json]
+          res.set(json)
+        } else res.error = error
       }
-      req.onerror = { event => error(promise) }
+      req.onerror = { event => res.error = error }
       req.send()
-      promise.future
-
+      res
     }
 
-    def loadHeaders(): Future[Map[String, String]] = {
-      var promise = Promise[Map[String, String]]()
+    def loadHeaders(): Resource[Map[String, String]] = {
+      val res = new Resource[Map[String, String]]
       req.open("HEAD", url, true)
       req.onload = { event =>
         val headers = req.getAllResponseHeaders()
@@ -66,45 +66,43 @@ object JsHttpClient {
           val kv = line.split(": ")
           kv(0) -> kv(1)
         }
-        promise.success(kv.toMap)
+        res.set(kv.toMap)
       }
-      req.onerror = { event => error(promise) }
+      req.onerror = { event => res.error = error }
       req.send()
-      promise.future
+      res
     }
   }
 }
 
-class JsHttpClient {
+class JsHttpClient(using dispatcher: Dispatcher) extends HttpClient {
 
-  def headers(url: String): Future[Map[String, String]] = {
+  def headers(url: String): Resource[Map[String, String]] = {
     JsHttpClient.loadHeaders(url)
   }
 
-  def loadString(url: String): Future[String] = {
+  def loadString(url: String): Resource[String] = {
     JsHttpClient.loadBytes(url).map {
       array => new String(array, "UTF8").replace("\\r\\n", "\n").replaceAll("\\r", "\n")
     }
   }
 
-  def loadBytes(url: String): Future[Array[Byte]] =
+  def loadTexture(url: String): Resource[Texture] = ???
+
+  def loadBytes(url: String): Resource[Array[Byte]] =
     JsHttpClient.loadBytes(url)
 
-  def loadJson(url: String): Future[Json] = {
+  def loadJson(url: String): Resource[Json] = {
     loadString(url).map(parse(_).right.get)
   }
 
-  def loadJsonAs[T](url: String)(implicit d: Decoder[T]): Future[T] = {
+  def loadJsonAs[T](url: String)(implicit d: Decoder[T]): Resource[T] = {
     loadString(url).map { string =>
       parse(string).right.get.as[T] match {
         case Left(message) => throw RuntimeException(s"Failed to decode json: $string, $message")
         case Right(obj)    => obj
       }
     }
-  }
-
-  def postJson(url: String, content: Json): Future[Boolean] = {
-    send("POST", url, content)
   }
 
   def send(method: String, url: String, content: Json = Json.Null): Future[Boolean] = {

@@ -2,6 +2,7 @@ package space.nexel.aether.core.platform
 
 import space.nexel.aether.core.base.Ref
 import javax.sound.midi.spi.MidiFileReader
+import scala.collection.mutable.ArrayBuffer
 
 object Resource {
   trait Config {}
@@ -29,6 +30,7 @@ object Resource {
       assert(resources.contains(resource))
       resources -= resource
     }
+
   }
 
   /** Create Resource indicating error. */
@@ -37,6 +39,41 @@ object Resource {
     res.error = message
     res
   }
+
+  def apply[T](value: T)(using dispatcher: Dispatcher): Resource[T] = {
+    val res = new Resource[T]()
+    res.set(value)
+    res
+  }
+
+  def sequence[T](seq: Seq[Resource[T]])(using dispatcher: Dispatcher): Resource[Seq[T]] = {
+    val res = new Resource[Seq[T]]()
+    val values = ArrayBuffer[T]()
+    var error: Option[String] = None
+    var count = seq.size
+    seq.foreach { r =>
+      r.onChange { r =>
+        r.error match {
+          case Some(msg) =>
+            error = Some(msg)
+            count -= 1
+            if (count == 0) {
+              if (error.isDefined) res.error = error.get
+              else res.set(values.toSeq)
+            }
+          case None =>
+            values += r()
+            count -= 1
+            if (count == 0) {
+              if (error.isDefined) res.error = error.get
+              else res.set(values.toSeq)
+            }
+        }
+      }
+    }
+    res
+  }
+
 }
 
 /** Asynchronously loaded resource. May result in error.
@@ -69,9 +106,10 @@ class Resource[T]() {
   def get: Option[T] = res
   def apply(): T = res.get
 
-  def onChange(listener: Resource[T] => _): Unit = {
+  def onChange(listener: Resource[T] => _): Resource[T] = {
     listeners += listener
-    if (res.isDefined) listener(this)
+    if (res.isDefined || error.isDefined) listener(this)
+    this
   }
 
   def map[U](f: T => U)(using dispatcher: Dispatcher): Resource[U] = {
@@ -92,4 +130,7 @@ class Resource[T]() {
     res
   }
 
+  override def toString = if (res.isDefined) s"Resource:${res.get}"
+  else if (error.isDefined) s"Error:${error.get}"
+  else "Loading"
 }

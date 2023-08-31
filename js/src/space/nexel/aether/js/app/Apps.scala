@@ -6,7 +6,7 @@ import scala.scalajs.js.annotation.JSExportAll
 import space.nexel.aether.core.platform.Module
 import space.nexel.aether.js.platform.JsPlatform
 import space.nexel.aether.app.shader.ShaderApp
-import aether.app.fractal.Mandelbrot
+import space.nexel.aether.app.mandelbrot.Mandelbrot
 
 @JSExportTopLevel("App")
 @JSExportAll

@@ -23,7 +23,7 @@ import space.nexel.aether.core.graphics.TextureOps
 import space.nexel.aether.core.graphics.Texture.FileFormat
 import space.nexel.aether.core.graphics.Texture.Format
 import space.nexel.aether.core.platform.Dispatcher
-import  space.nexel.aether.jvm.buffers.*
+import space.nexel.aether.jvm.buffers.*
 import space.nexel.aether.core.types.RectI
 
 object JvmTexture {
@@ -47,7 +47,8 @@ object JvmTexture {
     }
 
     override def loadThis(ref: Ref, config: Config)(using dispatcher: Dispatcher): Resource[Texture] = {
-      ref.loadByteBuffer().map { buffer =>
+      ref.loadBytes().map { bytes =>
+        val buffer = ByteBuffer(bytes)
         val stream = new BufferedInputStream(new ByteArrayInputStream(buffer.toByteArray))
         val data = fromStream(stream, config.fileFormat, config.format)
         assert(data != null, "Not found: " + ref)

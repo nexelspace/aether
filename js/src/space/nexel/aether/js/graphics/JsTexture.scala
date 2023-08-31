@@ -40,7 +40,7 @@ object JsTexture {
 
     override def loadThis(ref: Ref, config: Config)(using dispatcher: Dispatcher) = {
       val url = ref.toUrl
-      val resource = Resource[Texture]()
+      val resource = new Resource[Texture]()
       val image = new Image()
       image.src = url
       // image.onload = { event =>

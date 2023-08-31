@@ -7,6 +7,7 @@ import space.nexel.aether.core.platform.Event
 import space.nexel.aether.jvm.graphics.JvmDisplay
 import space.nexel.aether.core.platform.Dispatcher
 import space.nexel.aether.core.graphics.Display
+import java.nio.file.Paths
 
 class JvmPlatform() extends Platform(Seq(JvmDisplay)) {
   val log = new Log {
@@ -15,14 +16,12 @@ class JvmPlatform() extends Platform(Seq(JvmDisplay)) {
     }
   }
 
+  val wd = Paths.get("").toAbsolutePath().toString().replaceAll("\\\\", "/")
+  val base = new FileBase(wd)
+
   val displayFactory = JvmDisplay.factory(this)
 
   def run(loop: => Boolean): Unit = {
-    var cont = true
-    while (cont) {
-      cont = loop
-       Thread.`yield`()
-    }
+    while (loop) Thread.`yield`()
   }
 }
-

@@ -1,4 +1,4 @@
-package aether.app.fractal
+package space.nexel.aether.app.mandelbrot
 
 import Mandelbrot.Config
 import space.nexel.aether.core.types.Vec2I
@@ -15,12 +15,14 @@ import space.nexel.aether.core.graphics.ShaderBuffer.*
 import space.nexel.aether.core.graphics.Texture
 import space.nexel.aether.core.platform.Platform
 import space.nexel.aether.core.platform.Log
-import space.nexel.aether.lib.canvas.shader.ShaderVarBuffer 
+import space.nexel.aether.lib.canvas.shader.ShaderVarBuffer
 import space.nexel.aether.core.graphics.ShaderProgram
 import space.nexel.aether.core.util.Colors
 import space.nexel.aether.core.graphics.Graphics
 import space.nexel.aether.lib.canvas.shader.ShaderCanvas
 import space.nexel.aether.core.types.RectF
+import space.nexel.aether.core.platform.Resource
+import space.nexel.aether.core.platform.Dispatcher
 
 object Mandelbrot {
 
@@ -33,6 +35,7 @@ object Mandelbrot {
 
 class Mandelbrot(val platform: Platform) extends Module {
   given Platform = platform
+  given Dispatcher = platform.dispatcher
   val display = Display(Config.dispSize)
   given g: Graphics = display.graphics
 
@@ -51,7 +54,7 @@ class Mandelbrot(val platform: Platform) extends Module {
     event match {
       case Module.Init(_) =>
         painter.init()
-      case Module.Uninit =>
+      case Module.Uninit    =>
       case u: Module.Update =>
       case Display.Paint(disp) =>
         painter.paint()
@@ -66,13 +69,13 @@ class Mandelbrot(val platform: Platform) extends Module {
         // translateScreen(pos)
         Log(s"Translate $pos")
         scale = scale * Math.exp(-0.4 * wheel).toFloat
-        // translateScreen(-pos)
+      // translateScreen(-pos)
       case KeyEvent(true, true, keyCode, _) =>
         keyCode match {
           case KeyEvent.Code.SPACE =>
-          case _              =>
+          case _                   =>
         }
-      case w => //Log(s"Event $event")
+      case w => // Log(s"Event $event")
     }
   }
 
@@ -93,7 +96,15 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   class ShaderPainter extends Painter {
-    val program = ShaderProgram(Shaders.vertex, Shaders.fragment)
+    val resources = platform.resource(Mandelbrot.this)
+    val program = Resource.sequence {
+      Seq("mandelbrot.vs", "mandelbrot.fs").map(resources.loadString)
+    } map { case Seq(vs, fs) =>
+      Log(s"Shader loaded")
+      ShaderProgram(vs, fs)
+    }
+
+    // val program = ShaderProgram(Shaders.vertex, Shaders.fragment)
     val vertexBuffer = ShaderVarBuffer(Target.Vertex | Type.Float, 6, 2)
 
     override def init() = {
@@ -106,11 +117,13 @@ class Mandelbrot(val platform: Platform) extends Module {
     }
 
     override def paint() = {
-      program.attributeBuffer("a_position", vertexBuffer.buffer, vertexBuffer.numComponents)
-      program.uniform("iter").get.putI(iterations)
-      program.uniform("scale").get.putF(scale)
-      program.uniform("center").get.put2F(center)
-      program.draw(ShaderProgram.Mode.Triangles, 0, 6)
+      program.get.foreach { program =>
+        program.attributeBuffer("a_position", vertexBuffer.buffer, vertexBuffer.numComponents)
+        program.uniform("iter").get.putI(iterations)
+        program.uniform("scale").get.putF(scale)
+        program.uniform("center").get.put2F(center)
+        program.draw(ShaderProgram.Mode.Triangles, 0, 6)
+      }
     }
   }
 
