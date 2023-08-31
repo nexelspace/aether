@@ -40,9 +40,9 @@ void main (void)
 }
 
 case class PrimitiveRenderer(shader: Shader)(using g: Graphics) extends ShaderCanvas.Renderer {
-  val vertShaderPrim = ShaderObject.create(ShaderObject.Type.Vertex, vertex2D)
-  val fragShaderPrim = ShaderObject.create(ShaderObject.Type.Fragment, fragment2D)
-  val programPrim = ShaderProgram.create(vertShaderPrim, fragShaderPrim)
+  val vertShaderPrim = ShaderObject(ShaderObject.Type.Vertex, vertex2D)
+  val fragShaderPrim = ShaderObject(ShaderObject.Type.Fragment, fragment2D)
+  val programPrim = ShaderProgram(vertShaderPrim, fragShaderPrim)
 
   def begin() = {
     shader.buffer.vertex.buffer.clear()

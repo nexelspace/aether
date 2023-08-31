@@ -11,7 +11,7 @@ object ShaderObject {
     case Fragment extends Type
     case Vertex extends Type
 
-  def create(typ: Type, source: String)(using graphics: Graphics): ShaderObject = {
+  def apply(typ: Type, source: String)(using graphics: Graphics): ShaderObject = {
     graphics.shaderObjectFactory.create(Config(typ, Some(source)))
   }
 
