@@ -41,6 +41,7 @@ object JsDisplay extends Module {
     case Uninit =>
       assert(false, "Uninit unexpected")
       JsEvents.keyMap.reportUndefinedKeys()
+    case _ =>
   }
 }
 

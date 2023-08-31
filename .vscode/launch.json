@@ -9,6 +9,12 @@
             "request": "launch",
             "name": "ShaderApp",
             "mainClass": "space.nexel.aether.jvm.app.shader",
+        },
+        {
+            "type": "scala",
+            "request": "launch",
+            "name": "MandelbrotApp",
+            "mainClass": "space.nexel.aether.jvm.app.mandelbrot",
         }
     ]
 }

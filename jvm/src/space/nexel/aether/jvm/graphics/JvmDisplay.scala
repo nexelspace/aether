@@ -101,7 +101,6 @@ class JvmDisplay(platform: Platform, val config: Config)(using factory: DisplayF
   var pointerGrab = false
 
   def render(callback: Display => Unit): Unit = {
-    Log("JvmDisplay.render, poll events")
     glfwPollEvents()
     if (glfwWindowShouldClose(window)) {
       platform.exit()

@@ -8,26 +8,55 @@ object Platform {
 trait Platform(modules: Seq[Module]) {
   def log: Log
 
-  // def modules: Seq[Module]
-
   // Factories
   val displayFactory: Resource.Factory[Display, Display.Config]
 
   val dispatcher: Dispatcher = new Dispatcher()
 
-  var loop: RenderLoop = null
+  // Initialize system modules before instantiating App
+  init()
 
-  // protected def init() = {
+  def init() = {
     Log("Module init")
     modules.foreach(_.event(Module.Init(this)))
-  // }
-    
-  def exit(): Unit = loop.stop()
+  }
+
+  // called by renderloop
+  def uninit() = {
+    Log("Module uninit")
+    modules.reverse.foreach(_.event(Module.Uninit))
+  }
+
+  private var running = true
+
+  def exit(): Unit = running = false
 
   def runApp(app: Module) = {
     app.event(Module.Init(this))
-    loop = new RenderLoop(this, modules :+ app)
-    loop.run()
+    val mods = modules :+ app
+
+    run {
+      var processEvents = true
+      while (processEvents) {
+        dispatcher.getEvent() match {
+          case Some(event) => mods.foreach(_.event(event))
+          case None        => processEvents = false
+        }
+      }
+
+      displayFactory.instances.foreach(_.render { disp =>
+        mods.foreach(_.event(Display.Paint(disp)))
+      })
+      if (!running) {
+        app.event(Module.Uninit)
+        uninit()
+      }
+      running
+    }
+    // JVM runs in this thread and returns when app exits
+    // JS starts a render loop and returns immediately
   }
+
+  def run(loop: => Boolean): Unit
 
 }

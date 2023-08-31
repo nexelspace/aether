@@ -4,6 +4,7 @@ import mill.scalajslib.ScalaJSModule
 
 val scalaV = "3.3.0"
 val circeV = "0.14.3"
+val http4sV = "1.0.0-M38"
 
 object core extends ScalaModule {
   def scalaVersion = scalaV
@@ -53,4 +54,48 @@ object jvm extends ScalaModule {
         )
     }
   }
+}
+
+def copy(from: os.Path, toDir: os.Path) = {
+  os.list(from).map(f => os.copy.over(f, toDir / f.last, createFolders = true))
+}
+
+object server extends ScalaModule {
+  def scalaVersion = scalaV
+  def moduleDeps = Seq(core, app)
+  // def scalacOptions = Seq("-Wunused:imports")
+  def mainClass = Some("space.nexel.aether.server.Server")
+  def resources = T.sources {
+    val out = os.pwd / "out" / "server" / "resources"
+    copy(js.fastLinkJS().dest.path, out / "scripts")
+    // copy(os.pwd / "static", out / "static")
+    Seq(
+      millSourcePath / "resources",
+      out
+    ).map(p => PathRef(p))
+  }
+
+  def ivyDeps = Agg(
+    ivy"org.http4s::http4s-core:$http4sV",
+    ivy"org.http4s::http4s-blaze-server:$http4sV",
+    ivy"org.http4s::http4s-blaze-client:$http4sV",
+    ivy"org.http4s::http4s-circe:$http4sV",
+    ivy"org.http4s::http4s-dsl:$http4sV",
+    ivy"io.github.cdimascio:dotenv-java:2.3.2",
+    ivy"com.github.pureconfig::pureconfig-core:0.17.2",
+    ivy"ch.qos.logback:logback-classic:1.4.5".withDottyCompat(scalaVersion()),
+    ivy"com.lihaoyi::scalatags:0.12.0",
+    ivy"org.neo4j.driver:neo4j-java-driver:5.7.0",
+    // ivy"io.github.neotypes::neotypes-core:0.23.3".withDottyCompat(scalaVersion()),
+    ivy"io.github.neotypes::neotypes-generic:0.23.3".withDottyCompat(scalaVersion()),
+    ivy"io.github.neotypes::neotypes-cats-effect:0.23.3".withDottyCompat(scalaVersion()),
+    ivy"io.github.neotypes::neotypes-fs2-stream:0.23.3".withDottyCompat(scalaVersion()),
+  )
+
+  // Compile also js project
+  override def compile = T {
+    js.fastLinkJS()
+    super.compile()
+  }
+
 }

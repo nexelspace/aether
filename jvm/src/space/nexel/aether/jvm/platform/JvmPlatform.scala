@@ -16,16 +16,13 @@ class JvmPlatform() extends Platform(Seq(JvmDisplay)) {
   }
 
   val displayFactory = JvmDisplay.factory(this)
-  
 
-  // def run(handler: (Event) => Boolean): Unit = {
-  //   var cont = true
-  //   while (!requestExit && cont) {
-  //     val time = System.currentTimeMillis()
-      
-  //     cont = handler(Update(time))
-  //     // Thread.sleep(10)
-  //     Thread.`yield`()
-  //   }
-  // }
+  def run(loop: => Boolean): Unit = {
+    var cont = true
+    while (cont) {
+      cont = loop
+       Thread.`yield`()
+    }
+  }
 }
+
