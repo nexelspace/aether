@@ -5,6 +5,7 @@ import space.nexel.aether.core.platform.NativeResource
 import space.nexel.aether.core.graphics.ShaderObject.ShaderObjectFactory
 import space.nexel.aether.core.buffers.Var
 import ShaderProgram.*
+import space.nexel.aether.core.platform.Platform
 
 object ShaderProgram {
 
@@ -19,13 +20,13 @@ object ShaderProgram {
       fragmentShader: ShaderObject
   ) extends Resource.Config
 
-  def create(vertexShader: ShaderObject, fragmentShader: ShaderObject)(using graphics: Graphics): ShaderProgram =
-    graphics.shaderProgramFactory.create(Config(vertexShader, fragmentShader))
+  def apply(vertexShader: ShaderObject, fragmentShader: ShaderObject)(using platform: Platform): ShaderProgram =
+    platform.shaderProgramFactory.create(Config(vertexShader, fragmentShader))
 
-  def create(vertexSource: String, fragmentSource: String)(using graphics: Graphics): ShaderProgram = {
-    val vertex = ShaderObject.create(ShaderObject.Type.Vertex, vertexSource)
-    val fragment = ShaderObject.create(ShaderObject.Type.Fragment, fragmentSource)
-    create(vertex, fragment)
+  def apply(vertexSource: String, fragmentSource: String)(using platform: Platform): ShaderProgram = {
+    val vertex = ShaderObject(ShaderObject.Type.Vertex, vertexSource)
+    val fragment = ShaderObject(ShaderObject.Type.Fragment, fragmentSource)
+    apply(vertex, fragment)
   }
 
 }

@@ -14,8 +14,7 @@ import org.scalajs.dom
 import org.scalajs.dom.window
 
 object JsDisplay extends Module {
-  val factory = new DisplayFactory {
-    given DisplayFactory = this
+  def factory(using platform: Platform) = new DisplayFactory {
     def createThis(config: Config) = {
       val canvas = document.createElement("canvas").asInstanceOf[HTMLCanvasElement]
       canvas.width = 1024
@@ -31,7 +30,7 @@ object JsDisplay extends Module {
       given Dispatcher = platform.dispatcher
 
       window.onresize = (e: dom.UIEvent) => {
-        factory.instances.foreach {
+        platform.displayFactory.instances.foreach {
           case disp: JsDisplay =>
             if (disp.config.fullscreen) disp.resizeToWindow()
         }
@@ -45,10 +44,10 @@ object JsDisplay extends Module {
   }
 }
 
-class JsDisplay(val config: Config, canvas: HTMLCanvasElement)(using factory: DisplayFactory) extends Display {
+class JsDisplay(val config: Config, canvas: HTMLCanvasElement)(using platform: Platform) extends Display {
   given gl: GL = canvas.getContext("webgl2").asInstanceOf[GL]
 
-  def graphics = new JsGraphics(gl)
+  // def graphics = new JsGraphics(gl)
   def size: Vec2I = Vec2I(canvas.width, canvas.height)
 
   def resizeToWindow()(using dispatcher: Dispatcher) = {
@@ -62,7 +61,7 @@ class JsDisplay(val config: Config, canvas: HTMLCanvasElement)(using factory: Di
   def grabPointer(grab: Boolean): Unit = ???
 
   def render(callback: Display => Unit) = {
-    graphics.render(this, callback)
+    platform.graphics.render(this, callback)
   }
 
   def release() = ???

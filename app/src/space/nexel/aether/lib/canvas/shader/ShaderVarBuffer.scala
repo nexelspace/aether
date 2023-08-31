@@ -4,6 +4,7 @@ import space.nexel.aether.core.graphics.*
 import space.nexel.aether.core.buffers.*
 import space.nexel.aether.core.types.*
 import ShaderBuffer.ShaderBufferFactory
+import space.nexel.aether.core.platform.Platform
 
 object ShaderVarBuffer {
 
@@ -13,7 +14,7 @@ object ShaderVarBuffer {
     * @param numComponents Number of components in one buffer element.
     * @return
     */
-  def apply(flags: Int, capacity: Int, numComponents: Int)(using graphics: Graphics): ShaderVarBuffer = {
+  def apply(flags: Int, capacity: Int, numComponents: Int)(using platform: Platform): ShaderVarBuffer = {
     new ShaderVarBuffer(ShaderBuffer(flags, capacity * numComponents), numComponents)
   }
   //TODO: new ShaderBuffer Config

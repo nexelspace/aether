@@ -27,7 +27,7 @@ import  space.nexel.aether.jvm.buffers.*
 import space.nexel.aether.core.types.RectI
 
 object JvmTexture {
-  def factory(using g: Graphics) = new Resource.Factory[Texture, Texture.Config] {
+  def factory(using platform: Platform) = new Resource.Factory[Texture, Texture.Config] {
     given TextureFactory = this
     def createThis(config: Config) = {
       val data = if (config.data.isDefined) {
@@ -100,27 +100,19 @@ object JvmTexture {
   }
 }
 
-class JvmTexture(val config: Config, data: TextureData)(using g: Graphics, factory: TextureFactory) extends Texture {
+class JvmTexture(val config: Config, data: TextureData)(using platform: Platform, factory: TextureFactory) extends Texture {
 
   override val format = data.format
-
-  //  lazy val area: RectI = ??? //TODO: use area instead of size (jovr, subtextures)
-
   override val isPremultiplied = data.isPremultiplied
-//  var buf: Option[ByteBuffer] = Some(data.buffer)
-
-//  val bufferType = Texture.componentType(config.format)
 
   // buffer is always defined on JVM
   val buffer: Option[NativeBuffer] = Some(data.buffer)
 
-  // NativeBuffer.create(bufferType, config.format.bytesPerPixel * size.x * size.y)
-
   val glTextureId = glGenTextures()
-
-  //  val glPixelFormat = GlUtil.toGlPixelFormat(format)
   val glInternalFormat = GlUtil.toGlInternalFormat(format)
   val glFormat = GlUtil.toGlFormat(format)
+
+  val g = platform.graphics
 
   upload()
 

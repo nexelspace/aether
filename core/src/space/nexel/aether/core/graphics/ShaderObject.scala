@@ -2,6 +2,7 @@ package space.nexel.aether.core.graphics
 
 import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.platform.NativeResource
+import space.nexel.aether.core.platform.Platform
 
 object ShaderObject {
   type ShaderObjectFactory = Resource.Factory[ShaderObject, ShaderObject.Config] 
@@ -11,8 +12,8 @@ object ShaderObject {
     case Fragment extends Type
     case Vertex extends Type
 
-  def create(typ: Type, source: String)(using graphics: Graphics): ShaderObject = {
-    graphics.shaderObjectFactory.create(Config(typ, Some(source)))
+  def apply(typ: Type, source: String)(using platform: Platform): ShaderObject = {
+    platform.shaderObjectFactory.create(Config(typ, Some(source)))
   }
 
 }

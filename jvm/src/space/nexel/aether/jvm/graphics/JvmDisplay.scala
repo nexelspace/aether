@@ -59,7 +59,7 @@ object JvmDisplay extends Module {
 class JvmDisplay(platform: Platform, val config: Config)(using factory: DisplayFactory)
     extends Display
     /*with NativeResource[Display, Config]*/ {
-  val graphics = new JvmGraphics()
+  val graphics = platform.graphics
 
   private[aether] var size_ = Vec2I(config.size.x, config.size.y)
   def size = size_

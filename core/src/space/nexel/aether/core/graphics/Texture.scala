@@ -9,6 +9,7 @@ import space.nexel.aether.core.buffers.NativeBuffer
 import space.nexel.aether.core.internal.FlagFactory
 import space.nexel.aether.core.internal.FlagOps
 import space.nexel.aether.core.graphics.Graphics.RenderTarget
+import space.nexel.aether.core.platform.Platform
 
 object Texture {
   type TextureFactory = Resource.Factory[Texture, Config]
@@ -83,8 +84,12 @@ object Texture {
       buffer: Option[NativeBuffer] = None
   ) extends Resource.Config
 
-  def create(sizeX: Int, sizeY: Int)(using graphics: Graphics) = {
-    graphics.textureFactory.create(Config(size = Some(Vec2I(sizeX, sizeY))))
+  def apply(sizeX: Int, sizeY: Int)(using platform: Platform) = {
+    platform.textureFactory.create(Config(size = Some(Vec2I(sizeX, sizeY))))
+  }
+
+  def apply(flags: Int, sizeX: Int, sizeY: Int)(using platform: Platform): Texture = {
+    platform.textureFactory.create(Config(flags = flags, size = Some(Vec2I(sizeX, sizeY))))
   }
 }
 

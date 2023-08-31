@@ -9,6 +9,7 @@ import space.nexel.aether.core.platform.Event
 import space.nexel.aether.core.platform.NativeResource
 import space.nexel.aether.core.graphics.Graphics.RenderTarget
 import Display.Config
+import space.nexel.aether.core.platform.Platform
 
 object Display {
   type DisplayFactory = Resource.Factory[Display, Config]
@@ -20,6 +21,9 @@ object Display {
       windowTitle: String = ""
   ) extends Resource.Config
 
+  def apply(config: Config)(using platform: Platform): Display = platform.displayFactory.create(config)
+  def apply(sizeX: Int, sizeY: Int)(using platform: Platform): Display = platform.displayFactory.create(Config(size = Vec2I(sizeX, sizeY)))
+
   trait DisplayEvent extends Event {
     val display: Display
   }
@@ -30,7 +34,7 @@ object Display {
 
 trait Display extends NativeResource[Display, Display.Config] with RenderTarget {
   val config: Config
-  def graphics: Graphics
+  // def graphics: Graphics
   def size: Vec2I
 
   def grabPointer(grab: Boolean): Unit

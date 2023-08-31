@@ -17,18 +17,14 @@ import org.lwjgl.opengl.GL30._
 import org.lwjgl.opengl.GL41._
 import space.nexel.aether.core.types.RectI
 import JvmGraphics.*
+import space.nexel.aether.core.platform.Platform
 
 object JvmGraphics {
   lazy val frameBuffer = glGenFramebuffers()
 
 }
 
-class JvmGraphics extends Graphics {
-  given Graphics = this
-  val shaderProgramFactory = JvmShaderProgram.factory
-  val shaderObjectFactory = JvmShaderObject.factory
-  val shaderBufferFactory = JvmShaderBuffer.factory
-  val textureFactory = JvmTexture.factory
+class JvmGraphics(platform: Platform) extends Graphics {
 
   val dispScale = 1f
   var target: RenderTarget = _

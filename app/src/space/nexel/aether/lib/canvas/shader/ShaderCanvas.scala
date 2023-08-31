@@ -11,6 +11,7 @@ import space.nexel.aether.core.graphics.Graphics
 import space.nexel.aether.core.graphics.Display
 import space.nexel.aether.lib.types.Tx2FAxis
 import space.nexel.aether.core.graphics.Texture
+import space.nexel.aether.core.platform.Platform
 
 object ShaderCanvas {
 
@@ -21,13 +22,13 @@ object ShaderCanvas {
     def end(): Unit
   }
 
-  def apply(viewport: Vec2I)(using g: Graphics): ShaderCanvas = {
+  def apply(viewport: Vec2I)(using platform: Platform): ShaderCanvas = {
     new ShaderCanvas(RectF(Vec2F.Zero, viewport.toVec2F))
   }
  
 }
 
-class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity)(using g: Graphics) extends Canvas {
+class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity)(using platform: Platform) extends Canvas {
 
   val buffer = new RenderBuffer(1024)
 

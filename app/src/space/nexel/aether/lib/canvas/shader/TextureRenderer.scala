@@ -6,6 +6,7 @@ import space.nexel.aether.core.graphics.ShaderObject
 import space.nexel.aether.core.graphics.ShaderProgram
 import space.nexel.aether.core.graphics.Graphics
 import space.nexel.aether.lib.util.MatUtil
+import space.nexel.aether.core.platform.Platform
 
 object TextureRenderer {
   val header = """
@@ -50,7 +51,7 @@ void main()
 
 }
 
-case class TextureRenderer(shader: Shader, texture: Texture)(using g: Graphics) extends ShaderCanvas.Renderer {
+case class TextureRenderer(shader: Shader, texture: Texture)(using platform: Platform) extends ShaderCanvas.Renderer {
 
   def begin() = {
     shader.buffer.vertex.clear()
@@ -59,6 +60,7 @@ case class TextureRenderer(shader: Shader, texture: Texture)(using g: Graphics) 
 
   def end() = {
     // Renderer.get.blend = if (blend != Blend.Normal) blend else if (statePremultiplied) Blend.NormalPremultiplied else Blend.Normal
+    val g = platform.graphics
     val mvp = MatUtil.ortho(0, g.size.x, if (g.isTargetDisplay) g.size.y else -g.size.y, 0)
 
     shader.programTex.textureUnit(0, texture)

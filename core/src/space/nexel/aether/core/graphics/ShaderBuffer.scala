@@ -76,10 +76,10 @@ object ShaderBuffer {
   }
 
   val defaultCapacity = 16
-  def apply(flags: Int, capacity: Int)(using graphics: Graphics): ShaderBuffer = {
+  def apply(flags: Int, capacity: Int)(using platform: Platform): ShaderBuffer = {
     assert((flags & Size.Dynamic)!=0 || capacity>0)
     val cap = if (capacity==0) defaultCapacity else capacity
-    graphics.shaderBufferFactory.create(Config(flags, cap))
+    platform.shaderBufferFactory.create(Config(flags, cap))
   }
 
   case class Config(flags: Int, capacity: Int) extends Resource.Config {

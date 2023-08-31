@@ -52,10 +52,7 @@ object Graphics {
 }
 
 trait Graphics {
-  val shaderProgramFactory: Resource.Factory[ShaderProgram, ShaderProgram.Config]
-  val shaderObjectFactory: Resource.Factory[ShaderObject, ShaderObject.Config]
-  val shaderBufferFactory: Resource.Factory[ShaderBuffer, ShaderBuffer.Config]
-  val textureFactory: Resource.Factory[Texture, Texture.Config]
+
 
   protected val state: Graphics.State = new Graphics.State()
 

@@ -7,8 +7,9 @@ import space.nexel.aether.core.graphics.ShaderBuffer.Type
 import space.nexel.aether.core.types.RectF
 import space.nexel.aether.core.graphics.Graphics
 import space.nexel.aether.core.types.Color
+import space.nexel.aether.core.platform.Platform
 
-class RenderBuffer(size: Int)(using g: Graphics) {
+class RenderBuffer(size: Int)(using platform: Platform) {
   val vertex = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.Float, size, 3)
   val colors = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.UByte | Flag.Normalize, size, 4)
   val texCoord = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.Float, size, 2)

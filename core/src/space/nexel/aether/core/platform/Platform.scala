@@ -1,5 +1,10 @@
 package space.nexel.aether.core.platform
 import space.nexel.aether.core.graphics.Display
+import space.nexel.aether.core.graphics.ShaderProgram
+import space.nexel.aether.core.graphics.ShaderObject
+import space.nexel.aether.core.graphics.ShaderBuffer
+import space.nexel.aether.core.graphics.Texture
+import space.nexel.aether.core.graphics.Graphics
 
 object Platform {
   case class Update(time: Long) extends Event
@@ -10,7 +15,13 @@ trait Platform(modules: Seq[Module]) {
 
   // Factories
   val displayFactory: Resource.Factory[Display, Display.Config]
+  val shaderProgramFactory: Resource.Factory[ShaderProgram, ShaderProgram.Config]
+  val shaderObjectFactory: Resource.Factory[ShaderObject, ShaderObject.Config]
+  val shaderBufferFactory: Resource.Factory[ShaderBuffer, ShaderBuffer.Config]
+  val textureFactory: Resource.Factory[Texture, Texture.Config]
 
+  val graphics: Graphics
+  
   val dispatcher: Dispatcher = new Dispatcher()
 
   // Initialize system modules before instantiating App

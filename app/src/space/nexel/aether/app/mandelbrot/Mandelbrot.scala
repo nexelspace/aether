@@ -31,10 +31,9 @@ object Mandelbrot {
   }
 }
 
-class Mandelbrot(val platform: Platform) extends Module {
-
-  val display = platform.displayFactory.create(Display.Config(size = Config.dispSize))
-  given Graphics = display.graphics
+class Mandelbrot(platform: Platform) extends Module {
+  given Platform = platform
+  val display = Display(Display.Config(size = Config.dispSize))
 
   /** Select painter code. */
   lazy val painter = if (true) new ShaderPainter else new TexturePainter
@@ -91,7 +90,7 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   class ShaderPainter extends Painter {
-    val program = ShaderProgram.create(Shaders.vertex, Shaders.fragment)
+    val program = ShaderProgram(Shaders.vertex, Shaders.fragment)
     val vertexBuffer = ShaderVarBuffer(Target.Vertex | Type.Float, 6, 2)
 
     override def init() = {
@@ -113,13 +112,13 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   class TexturePainter extends Painter {
-    val dispTex = Texture.create(Config.dispSize.x, Config.dispSize.y)
+    val dispTex = Texture(Texture.Flag.Writable, Config.dispSize.x, Config.dispSize.y)
 
     override def init() = {}
 
     override def paint() = {
       updateTexture()
-      display.graphics.setTargetDisplay(display)
+      platform.graphics.setTargetDisplay(display)
       val canvas = ShaderCanvas(display.size)
       // canvas.begin()
       // canvas.clear(0)

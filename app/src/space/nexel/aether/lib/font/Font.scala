@@ -10,15 +10,16 @@ import space.nexel.aether.core.base.Ref
 import space.nexel.aether.core.graphics.Graphics
 import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.platform.Dispatcher
+import space.nexel.aether.core.platform.Platform
 
 object Font {
-  def load(base: Base, textureFile: String, configFile: String)(using g: Graphics, dispatcher: Dispatcher): Resource[Font] = {
+  def load(base: Base, textureFile: String, configFile: String)(using platform: Platform, dispatcher: Dispatcher): Resource[Font] = {
     load(base.ref(textureFile), base.ref(configFile))
   }
 
-  def load(textureRef: Ref, configRef: Ref)(using g: Graphics, dispatcher: Dispatcher): Resource[Font] = {
+  def load(textureRef: Ref, configRef: Ref)(using platform: Platform, dispatcher: Dispatcher): Resource[Font] = {
     for {
-      texture <- g.textureFactory.load(textureRef, Texture.Config(flags = Texture.Flag.Readable))
+      texture <- platform.textureFactory.load(textureRef, Texture.Config(flags = Texture.Flag.Readable))
       config <- configRef.loadString()
     } yield create(texture, config)
   }
