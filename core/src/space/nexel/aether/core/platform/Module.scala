@@ -6,7 +6,7 @@ object Module {
 
   abstract class ModuleEvent extends Event
 
-  case class Init() extends ModuleEvent
+  case class Init(platform: Platform) extends ModuleEvent
   /** @time in ms. */
   case class Update(time: Long) extends ModuleEvent
   case object Uninit extends ModuleEvent

@@ -16,37 +16,57 @@ import java.nio.IntBuffer
 import space.nexel.aether.core.platform.NativeResource
 import org.lwjgl.glfw.Callbacks.glfwFreeCallbacks
 import space.nexel.aether.core.types.Vec2I
+import space.nexel.aether.core.platform.Event
+import space.nexel.aether.core.platform.Module
+import space.nexel.aether.core.platform.Module.*
+import space.nexel.aether.core.math.VMathD.Log2
+import space.nexel.aether.core.platform.Log
 
-object JvmDisplay {
+object JvmDisplay extends Module {
 
   def factory(platform: Platform) = new Resource.Factory[Display, Config] {
     given DisplayFactory = this
-    def apply(config: Config) = new JvmDisplay(platform, config)
+    def createThis(config: Config) = new JvmDisplay(platform, config)
   }
 
-  private var graphics: Graphics = null
+  // private var graphics: Graphics = null
 
-  private def init() = {
-    if (JvmDisplay.graphics == null) {
+  // private def init() = {
+  //   if (JvmDisplay.graphics == null) {
+  //     GLFWErrorCallback.createPrint(System.err).set()
+  //     glfwInit()
+  //     JvmDisplay.graphics = new JvmGraphics()
+  //   }
+  // }
+
+  def event(event: Event) = event match {
+    case Init(_) =>
+      Log("JVMDIsplay.Init")
+      // init GLFW
+      // will print the error message in System.err.
       GLFWErrorCallback.createPrint(System.err).set()
-      glfwInit()
-      JvmDisplay.graphics = new JvmGraphics()
-    }
+      // Initialize GLFW. Most GLFW functions will not work before doing this.
+      if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW")
+    case e: Update =>
+    case Uninit    =>
+      // Terminate GLFW and free the error callback
+      glfwTerminate()
+      glfwSetErrorCallback(null).free()
+    case _ =>
   }
 }
 
-class JvmDisplay(platform: Platform, config: Config)(using factory: DisplayFactory)
+class JvmDisplay(platform: Platform, val config: Config)(using factory: DisplayFactory)
     extends Display
     /*with NativeResource[Display, Config]*/ {
-  JvmDisplay.init()
-  val graphics = JvmDisplay.graphics
+  val graphics = new JvmGraphics()
 
   private[aether] var size_ = Vec2I(config.size.x, config.size.y)
   def size = size_
 
   // optional, the current window hints are already the default
   glfwDefaultWindowHints()
-  // the window will stay hidden after creation
+    // the window will stay hidden after creation
   glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
   // the window will be resizable
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
@@ -81,7 +101,14 @@ class JvmDisplay(platform: Platform, config: Config)(using factory: DisplayFacto
   var pointerGrab = false
 
   def render(callback: Display => Unit): Unit = {
+    Log("JvmDisplay.render, poll events")
+    glfwPollEvents()
+    if (glfwWindowShouldClose(window)) {
+      platform.exit()
+    }
     graphics.render(this, callback)
+    glfwSwapBuffers(window)
+
   }
 
   def release() = {
@@ -104,16 +131,6 @@ class JvmDisplay(platform: Platform, config: Config)(using factory: DisplayFacto
     pointerGrab = grab
     // Log(s"Display.grabPointer($grab)")
     glfwSetInputMode(window, GLFW_CURSOR, if (grab) GLFW_CURSOR_DISABLED else GLFW_CURSOR_NORMAL)
-  }
-
-  def render(callback: => Unit) = {
-    glfwPollEvents()
-    if (glfwWindowShouldClose(window)) {
-      // TODO
-      // platform.exit()
-    }
-    callback
-    glfwSwapBuffers(window)
   }
 
   def clear(r: Float, g: Float, b: Float, a: Float): Unit = {

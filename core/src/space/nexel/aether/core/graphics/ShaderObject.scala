@@ -12,7 +12,7 @@ object ShaderObject {
     case Vertex extends Type
 
   def create(typ: Type, source: String)(using graphics: Graphics): ShaderObject = {
-    graphics.shaderObjectFactory(Config(typ, Some(source)))
+    graphics.shaderObjectFactory.create(Config(typ, Some(source)))
   }
 
 }

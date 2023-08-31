@@ -29,7 +29,7 @@ import space.nexel.aether.core.types.RectI
 object JvmTexture {
   def factory(using g: Graphics) = new Resource.Factory[Texture, Texture.Config] {
     given TextureFactory = this
-    def apply(config: Config) = {
+    def createThis(config: Config) = {
       val data = if (config.data.isDefined) {
         fromStream(new BufferedInputStream(new ByteArrayInputStream(config.data.get)), config.fileFormat, config.format)
       } else {
@@ -49,7 +49,7 @@ object JvmTexture {
       r
     }
 
-    def load(ref: Ref, config: Config)(using dispatcher: Dispatcher): Resource[Texture] = {
+    override def loadThis(ref: Ref, config: Config)(using dispatcher: Dispatcher): Resource[Texture] = {
       ref.loadByteBuffer().map { buffer =>
         val stream = new BufferedInputStream(new ByteArrayInputStream(buffer.toByteArray))
         val data = fromStream(stream, config.fileFormat, config.format)
@@ -100,10 +100,7 @@ object JvmTexture {
   }
 }
 
-class JvmTexture(config: Config, data: TextureData)(using g: Graphics, factory: TextureFactory) extends Texture {
-  def release() = {
-    factory.released(this)
-  }
+class JvmTexture(val config: Config, data: TextureData)(using g: Graphics, factory: TextureFactory) extends Texture {
 
   override val format = data.format
 
@@ -187,7 +184,8 @@ class JvmTexture(config: Config, data: TextureData)(using g: Graphics, factory: 
     }
   }
 
-  def releaseThis() = {
+  def release() = {
+    factory.released(this)
     glDeleteTextures(new Array[Int](glTextureId))
   }
 

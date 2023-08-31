@@ -1,4 +1,4 @@
-package aether.jvm.lwjgl
+package space.nexel.aether.jvm.graphics
 
 import space.nexel.aether.core.graphics.ShaderBuffer
 import space.nexel.aether.core.graphics.ShaderBuffer.*
@@ -28,7 +28,7 @@ object JvmShaderBuffer {
 
   def factory = new ShaderBufferFactory {
     given ShaderBufferFactory = this
-    def apply(config: Config) = new JvmShaderBuffer(config)
+    def createThis(config: Config) = new JvmShaderBuffer(config)
   }
 
 }

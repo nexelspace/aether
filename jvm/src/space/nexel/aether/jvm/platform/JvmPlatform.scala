@@ -6,8 +6,9 @@ import space.nexel.aether.core.platform.Log
 import space.nexel.aether.core.platform.Event
 import space.nexel.aether.jvm.graphics.JvmDisplay
 import space.nexel.aether.core.platform.Dispatcher
+import space.nexel.aether.core.graphics.Display
 
-class JvmPlatform extends Platform {
+class JvmPlatform() extends Platform(Seq(JvmDisplay)) {
   val log = new Log {
     def apply(message: String) = {
       println(message)
@@ -15,6 +16,7 @@ class JvmPlatform extends Platform {
   }
 
   val displayFactory = JvmDisplay.factory(this)
+  
 
   // def run(handler: (Event) => Boolean): Unit = {
   //   var cont = true

@@ -6,8 +6,10 @@ import space.nexel.aether.core.platform.Log
 import space.nexel.aether.core.graphics.Display
 import space.nexel.aether.core.platform.Event
 import org.scalajs.dom
+import space.nexel.aether.js.graphics.JsDisplay
 
-class JsPlatform extends Platform {
+
+class JsPlatform extends Platform(Seq(JsDisplay)) {
   val log = new Log {
     def apply(message: String) = {
       println(message)

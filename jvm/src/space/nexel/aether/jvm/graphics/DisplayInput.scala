@@ -30,26 +30,11 @@ class DisplayInput(display: JvmDisplay, dispatcher: Dispatcher) {
       // Log(s"Key callback $window, $key, $scancode, $action,  $mods")
       val akey = key // aether uses GLFW keycode constants
       action match {
-        case GLFW_PRESS   => sysKeyPress(true, akey, mods)
-        case GLFW_RELEASE => sysKeyPress(false, akey, mods)
+        case GLFW_PRESS   => dispatcher.sysKeyPress(true, akey, mods)
+        case GLFW_RELEASE => dispatcher.sysKeyPress(false, akey, mods)
         case GLFW_REPEAT  =>
       }
   )
-
-  val REPEAT_INIT = 250
-  val REPEAT_TIME = 50
-
-  var repeatTime = 0L
-  var repeatEvent: KeyEvent = _
-
-  /** Add key event to queue. Uses internal key repeat logic. */
-  def sysKeyPress(pressed: Boolean, code: Int, modifiers: Int) = {
-    dispatcher.add(new KeyEvent(pressed, true, code, modifiers))
-    if (pressed || (repeatEvent != null && repeatEvent.code == code)) {
-      repeatEvent = if (pressed) new KeyEvent(pressed, false, code, modifiers) else null
-      repeatTime = System.currentTimeMillis() + REPEAT_INIT
-    }
-  }
 
   def sysCharType(char: Char) = {
     dispatcher.add(new CharEvent(char))

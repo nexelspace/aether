@@ -1,20 +1,34 @@
 package space.nexel.aether.core.platform
 
 import space.nexel.aether.core.base.Ref
+import javax.sound.midi.spi.MidiFileReader
 
 object Resource {
   trait Config {}
   trait Factory[T, C <: Config] {
-    def apply(config: C): T
-    def load(ref: Ref, config: C)(using dispatcher: Dispatcher): Resource[T] =
+    protected var resources = Set[T]()
+    def instances: Seq[T] = resources.toSeq
+
+    final def create(config: C): T = {
+      val obj = createThis(config)
+      resources += obj
+      obj
+    }
+    final def load(ref: Ref, config: C)(using dispatcher: Dispatcher): Resource[T] = {
+      val res = loadThis(ref, config)
+      res.onChange { r =>
+        resources += r()
+      }
+      res
+    }
+    def createThis(config: C): T
+    def loadThis(ref: Ref, config: C)(using dispatcher: Dispatcher): Resource[T] =
       Resource.error("Factory.load not supported")
 
-    protected var resources = Set[T]()
-    /*private[aether]*/ def released(resource: T) = {
+    private[aether] def released(resource: T) = {
       assert(resources.contains(resource))
       resources -= resource
     }
-    def instances: Seq[T] = resources.toSeq
   }
 
   /** Create Resource indicating error. */

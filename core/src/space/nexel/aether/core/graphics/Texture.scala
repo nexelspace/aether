@@ -84,13 +84,14 @@ object Texture {
   ) extends Resource.Config
 
   def create(sizeX: Int, sizeY: Int)(using graphics: Graphics) = {
-    graphics.textureFactory(Config(size = Some(Vec2I(sizeX, sizeY))))
+    graphics.textureFactory.create(Config(size = Some(Vec2I(sizeX, sizeY))))
   }
 }
 
 trait Texture extends NativeResource[Texture, Texture.Config] with RenderTarget {
   val config: Texture.Config
-  def size: Vec2I
+  val size = config.size.get
+
   def area = RectI(0, 0, size.x, size.y)
 
   def format: Texture.Format

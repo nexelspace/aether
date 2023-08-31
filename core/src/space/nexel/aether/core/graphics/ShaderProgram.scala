@@ -20,7 +20,7 @@ object ShaderProgram {
   ) extends Resource.Config
 
   def create(vertexShader: ShaderObject, fragmentShader: ShaderObject)(using graphics: Graphics): ShaderProgram =
-    graphics.shaderProgramFactory(Config(vertexShader, fragmentShader))
+    graphics.shaderProgramFactory.create(Config(vertexShader, fragmentShader))
 
   def create(vertexSource: String, fragmentSource: String)(using graphics: Graphics): ShaderProgram = {
     val vertex = ShaderObject.create(ShaderObject.Type.Vertex, vertexSource)
@@ -32,8 +32,6 @@ object ShaderProgram {
 
 trait ShaderProgram extends NativeResource[ShaderProgram, ShaderProgram.Config] {
   def error: Option[String]
-
-  def isError: Boolean = error.isDefined
 
   def bindAttribute(index: Int, attributeName: String): Unit
 

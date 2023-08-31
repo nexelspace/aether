@@ -6,19 +6,23 @@ class RenderLoop(platform: Platform, modules: Seq[Module]) {
 
   private var running = true
 
-  def stop = running = false
+  def stop() = running = false
 
   def run() = {
-    Log("Module init")
-    modules.foreach(_.event(Module.Init()))
-    Log("Start loop")
     while (running) {
+
+      var processEvents = true
+      while (processEvents) {
+        platform.dispatcher.getEvent() match {
+          case Some(event) => modules.foreach(_.event(event))
+          case None        => processEvents = false
+        }
+      }
+
       platform.displayFactory.instances.foreach(_.render { disp =>
         modules.foreach(_.event(Display.Paint(disp)))
       })
     }
-    Log("Module uninit")
     modules.reverse.foreach(_.event(Module.Uninit))
-    Log("Exit")
   }
 }

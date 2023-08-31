@@ -8,6 +8,7 @@ import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.platform.Event
 import space.nexel.aether.core.platform.NativeResource
 import space.nexel.aether.core.graphics.Graphics.RenderTarget
+import Display.Config
 
 object Display {
   type DisplayFactory = Resource.Factory[Display, Config]
@@ -28,6 +29,7 @@ object Display {
 }
 
 trait Display extends NativeResource[Display, Display.Config] with RenderTarget {
+  val config: Config
   def graphics: Graphics
   def size: Vec2I
 

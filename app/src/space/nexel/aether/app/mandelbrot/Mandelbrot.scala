@@ -33,7 +33,7 @@ object Mandelbrot {
 
 class Mandelbrot(val platform: Platform) extends Module {
 
-  val display = platform.displayFactory(Display.Config(size = Config.dispSize))
+  val display = platform.displayFactory.create(Display.Config(size = Config.dispSize))
   given Graphics = display.graphics
 
   /** Select painter code. */
@@ -47,7 +47,7 @@ class Mandelbrot(val platform: Platform) extends Module {
 
   override def event(event: Event) = {
     event match {
-      case Module.Init() =>
+      case Module.Init(_) =>
         painter.init()
       case Module.Uninit =>
       case u: Module.Update =>

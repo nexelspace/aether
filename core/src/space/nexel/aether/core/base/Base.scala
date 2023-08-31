@@ -6,6 +6,7 @@ import space.nexel.aether.core.graphics.Texture
 
 trait Base {
   def ref(path: String): Ref = new Ref(this, path)
+  def toUrl(path: String): String
 
   def loadString(path: String): Resource[String]
   def loadTexture(path: String): Resource[Texture]
