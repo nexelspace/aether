@@ -184,16 +184,19 @@ class JsTexture(val config: Config)(using graphics: Graphics, factory: TextureFa
     }
   }
 
-  private def preparePixelAccess() = {
+  val fb = gl.createFramebuffer()
+
+  def preparePixelAccess() = {
     assert(isReadable || isWritable, "Texture has no pixel access")
     if (rendered) {
       rendered = false
-      ???
-      //      gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, Renderer.get.frameBuffer)
-      //      gl.glBindTexture(GL.GL_TEXTURE_2D, glTextureId)
-      //      gl.glFramebufferTexture2D(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, GL.GL_TEXTURE_2D, glTextureId, 0)
-      //      buffer.clear()
-      //      gl.glReadPixels(0, 0, sizeX, sizeY, GlUtil.toGlPixelFormat(format), GL.GL_UNSIGNED_BYTE, buffer)
+      val buffer = nativeBuffer.asInstanceOf[JsBuffer[_]]
+
+      gl.bindFramebuffer(GL.FRAMEBUFFER, fb)
+      gl.bindTexture(GL.TEXTURE_2D, glTexture)
+      gl.framebufferTexture2D(GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, glTexture, 0)
+      nativeBuffer.clear()
+      gl.readPixels(0, 0, size.x, size.y, GlUtil.toGlPixelFormat(format), GL.UNSIGNED_BYTE, buffer.array)
     }
   }
 
@@ -202,49 +205,6 @@ class JsTexture(val config: Config)(using graphics: Graphics, factory: TextureFa
   def release() = {
     factory.released(this)
     gl.deleteTexture(glTexture)
-  }
-
-  override def getARGB(x: Int, y: Int): Int = {
-    preparePixelAccess()
-    // TODO: support different data types
-    val array = nativeBuffer.asInstanceOf[JsBuffer[Short]].array
-    val p = (y * size.x + x) * 4
-    val r = array(p)
-    val g = array(p + 1)
-    val b = array(p + 2)
-    val a = array(p + 3)
-    (a << 24) | (r << 16) | (g << 8) | (b << 0)
-  }
-
-  override def setARGB(argb: Int, x: Int, y: Int) = {
-    preparePixelAccess()
-    modified = true
-    ???
-  }
-
-  override def setARGB(array: Array[Int], offset: Int, stride: Int, area: RectI): Unit = {
-    ???
-  }
-
-  override def getARGB(array: Array[Int], offset: Int, stride: Int, area: RectI) = {
-    preparePixelAccess()
-    val realStride = if (stride == 0) size.x else stride
-    val ar = if (area == null) this.area else area
-    Log(s"JsTexture.getARGB($array, $offset, $realStride, $area), $size")
-    // TODO: optimize
-    for (y ← ar.y until ar.y2) {
-      var p = offset + realStride * (y - ar.y) + ar.x
-      for (x ← ar.x until ar.x2) {
-        array(p) = getARGB(x, y)
-        p += 1
-      }
-    }
-  }
-
-  override def read(target: Array[Byte], offset: Int, stride: Int, area: RectI): Unit = ???
-
-  override def write(array: Array[Byte], offset: Int, stride: Int, area: RectI): Unit = {
-    ???
   }
 
   // override def encode(target: DataBuffer.Write, format: Texture.FileFormat, flags: Int): Unit = ???

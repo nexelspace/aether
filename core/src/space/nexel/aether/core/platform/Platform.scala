@@ -45,6 +45,7 @@ trait Platform(modules: Seq[Module]) {
       }
 
       displayFactory.instances.foreach(_.render { disp =>
+        assert(disp.graphics.target != null)
         mods.foreach(_.event(Display.Paint(disp)))
       })
       if (!running) {

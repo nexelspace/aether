@@ -30,7 +30,7 @@ object Display {
 
 
   def apply(config: Config)(using platform: Platform): Display = platform.displayFactory.create(config)
-  def apply(sizeX: Int, sizeY: Int)(using platform: Platform): Display = platform.displayFactory.create(Config(size = Vec2I(sizeX, sizeY)))
+  def apply(size: Vec2I)(using platform: Platform): Display = platform.displayFactory.create(Config(size = size))
 
 }
 

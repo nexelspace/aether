@@ -23,4 +23,9 @@ object GlUtil {
     case Format.RGBA_8888_UI => RGBA_INTEGER
     case _                   => sys.error(s"Unimplemented for $format")
   }
+
+  def toGlPixelFormat(format: Format): Int = format match {
+    case Format.RGBA_8888   => GL.RGBA
+    case _                  => assert(false, s"Unsupported pixel format: $format"); 0
+  }
 }

@@ -32,19 +32,20 @@ object Mandelbrot {
 }
 
 class Mandelbrot(val platform: Platform) extends Module {
-  Log("Mandelbrot")
-
-  val display = platform.displayFactory.create(Display.Config(size = Config.dispSize))
-  given Graphics = display.graphics
+  given Platform = platform
+  val display = Display(Config.dispSize)
+  given g: Graphics = display.graphics
 
   /** Select painter code. */
-  lazy val painter = if (true) new ShaderPainter else new TexturePainter
+  val painter = if (false) new ShaderPainter else new TexturePainter
 
   val iterations = 400
   var pointerStart = Vec2F.Zero
   var mousePos = Vec2F.Zero
   var scale = 4.0f
   var center = Vec2F(-0.01f, -0.01f)
+
+  val canvas = ShaderCanvas(display.size)
 
   override def event(event: Event) = {
     event match {
@@ -62,10 +63,10 @@ class Mandelbrot(val platform: Platform) extends Module {
         translateScreen(offset)
         pointerStart = pos
       case MouseWheel(pos, wheel) =>
-        translateScreen(pos)
+        // translateScreen(pos)
         Log(s"Translate $pos")
         scale = scale * Math.exp(-0.4 * wheel).toFloat
-        translateScreen(-pos)
+        // translateScreen(-pos)
       case KeyEvent(true, true, keyCode, _) =>
         keyCode match {
           case KeyEvent.Code.SPACE =>
@@ -114,19 +115,12 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   class TexturePainter extends Painter {
-    val dispTex = Texture(Config.dispSize.x, Config.dispSize.y)
+    val dispTex = Texture(Texture.Flag.Writable, Config.dispSize.x, Config.dispSize.y)
 
     override def init() = {}
 
     override def paint() = {
       updateTexture()
-      display.graphics.setTargetDisplay(display)
-      val canvas = ShaderCanvas(display.size)
-      // canvas.begin()
-      // canvas.clear(0)
-      // canvas.transform { t =>
-      //   t.scale(Config.dispSize.x, Config.dispSize.y)
-      // }
       canvas.drawTexture(RectF(Vec2F.Zero, Config.dispSize.toVec2F), dispTex)
       canvas.flush()
     }

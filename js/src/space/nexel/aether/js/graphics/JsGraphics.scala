@@ -4,6 +4,7 @@ import org.scalajs.dom.raw.{WebGLRenderingContext => GL}
 import space.nexel.aether.core.types.*
 import space.nexel.aether.core.graphics.*
 import space.nexel.aether.core.graphics.Graphics.*
+import space.nexel.aether.core.platform.Log
 
 class JsGraphics(val gl: GL) extends Graphics {
   given GL = gl
@@ -18,21 +19,22 @@ class JsGraphics(val gl: GL) extends Graphics {
 
   def render(disp: Display, callback: (Display) => Unit) = {
     target = disp
-    // initRendering(RectI(0, 0, target.size.x, target.size.y), true)
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0)
     callback(disp)
     target = null
   }
 
   def setTargetDisplay(display: Display) = {
+    ??? // TODO
     target match {
       case d: JsDisplay if (d == display) =>
       case _ =>
-        ???
+        target = display
+        gl.bindFramebuffer(GL.FRAMEBUFFER, null)
     }
   }
 
   def setTargetTexture(texture: Texture, area: RectI) = {
+    ??? // TODO
     target match {
       case t: JsTexture if (t == texture) =>
       case _ =>

@@ -15,7 +15,7 @@ class JsPlatform extends Platform(Seq(JsDisplay)) {
     }
   }
 
-  val displayFactory = JsDisplay.factory
+  val displayFactory = JsDisplay.factory(dispatcher)
 
   def run(loop: => Boolean): Unit = {
     def frame(time: Double): Unit = {
