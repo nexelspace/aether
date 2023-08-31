@@ -11,8 +11,8 @@ object KeyMap {
     */
   def create(mapping: Seq[Item]): Map[Int, Int] = {
     for {
-      keymap ← mapping
-      index ← 0 until keymap.count
+      keymap <- mapping
+      index <- 0 until keymap.count
       entry = (keymap.source + index -> (keymap.target + index))
     } yield entry
   }.toMap

@@ -74,7 +74,7 @@ trait PixelOps {
     preparePixelAccess()
     val realStride = if (stride == 0) size.x else stride
 //    val buffer = this.buf.get
-    for (y ← 0 until area.size.y) {
+    for (y <- 0 until area.size.y) {
       nativeBuffer.position = ((y + area.y) * size.x + area.x) * format.bytesPerPixel
       var i = offset + realStride * y
       array.view.slice(i, i + area.size.x) foreach { c ⇒
@@ -95,10 +95,10 @@ trait PixelOps {
     preparePixelAccess()
     val realStride = if (stride == 0) size.x else stride
 //    val buffer = this.buf.get
-    for (y ← 0 until area.size.y) {
+    for (y <- 0 until area.size.y) {
       nativeBuffer.position = ((y + area.y) * size.x + area.x) * format.bytesPerPixel
       var i = offset + realStride * y + area.x
-      for (j ← 0 until area.size.x) {
+      for (j <- 0 until area.size.x) {
         array(i + j) = pixelReader().argb
       }
     }
@@ -110,7 +110,7 @@ trait PixelOps {
     val realStride = if (stride == 0) size.x * bpp else stride
     assert(bpp > 0)
     //    Log(s"Texture write: $offset, $stride, $area, $bpp, ${source.length}, ${buffer.limit()}")
-    for (iy ← 0 until area.size.y) {
+    for (iy <- 0 until area.size.y) {
       nativeBuffer.position = ((iy + area.y) * size.x + area.x) * bpp
       ???
 //      buffer.put(source, offset + realStride * iy, area.size.x * bpp)

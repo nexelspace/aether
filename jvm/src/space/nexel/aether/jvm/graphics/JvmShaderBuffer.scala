@@ -52,7 +52,6 @@ class JvmShaderBuffer(config: Config)(using factory: ShaderBufferFactory) extend
     buffer.resizeBuffer(size)
   }
 
-  // TODO
   override def size = (if (readMode) buffer.buffer.limit() else buffer.buffer.position())
 
   override def clear() = {
@@ -68,7 +67,6 @@ class JvmShaderBuffer(config: Config)(using factory: ShaderBufferFactory) extend
   assert(glBufferId > 0, "glGenBuffers failed: " + glGetError() + ", " + Strings.toHex(glGetError(), 4))
 
   var readMode = false
-  //  var buffer: Buffer = null
 
   // Texture Buffer support
   val glTextureId = if (target == Target.Texture) {
@@ -116,8 +114,6 @@ class JvmShaderBuffer(config: Config)(using factory: ShaderBufferFactory) extend
       }
     }
   }
-
-  // def size() = components*buffer.remaining()
 
   override def toString(): String = {
     s"[$dataType-${config.flags.toHexString}, $buffer]"

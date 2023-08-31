@@ -39,12 +39,9 @@ object JvmTexture {
         if (config.argb.isDefined) {
           TextureOps.putARGB(config.argb.get, data.buffer, data.format, data.isPremultiplied)
           data.buffer.flip()
-          // Log("Created texture "+config.argb+" -> "+data.buffer)
         }
         data
       }
-
-      // Log("Creating texture "+config+" -> "+data)
       val r = new JvmTexture(config, data)
       r
     }
@@ -56,11 +53,6 @@ object JvmTexture {
         assert(data != null, "Not found: " + ref)
         new JvmTexture(config, data)
       }
-
-      // val stream = ref.base.asInstanceOf[JvmBase].getInputStream(ref.path)
-      // val data = fromStream(stream, config.fileFormat, config.format)
-      // assert(data != null, "Not found: " + ref)
-      // Future(new NTexture(config, data))
     }
 
     def fromStream(stream: BufferedInputStream, fileFormat: FileFormat, format: Format): TextureData = {
@@ -85,10 +77,7 @@ object JvmTexture {
         }
       } catch {
         case e: IOException ⇒
-//        Log(e.getMessage)
           throw new RuntimeException("Failed to decode image: " + e.getMessage)
-        // TextureData.createDummy(8)
-//        null
       } finally {
         try {
           stream.close()
@@ -104,28 +93,17 @@ class JvmTexture(val config: Config, data: TextureData)(using g: Graphics, facto
 
   override val format = data.format
 
-  //  lazy val area: RectI = ??? //TODO: use area instead of size (jovr, subtextures)
-
   override val isPremultiplied = data.isPremultiplied
-//  var buf: Option[ByteBuffer] = Some(data.buffer)
-
-//  val bufferType = Texture.componentType(config.format)
-
-  // buffer is always defined on JVM
   val buffer: Option[NativeBuffer] = Some(data.buffer)
-
-  // NativeBuffer.create(bufferType, config.format.bytesPerPixel * size.x * size.y)
 
   val glTextureId = glGenTextures()
 
-  //  val glPixelFormat = GlUtil.toGlPixelFormat(format)
   val glInternalFormat = GlUtil.toGlInternalFormat(format)
   val glFormat = GlUtil.toGlFormat(format)
 
   upload()
 
   def upload() = {
-    // assert(buf.isDefined)
     glBindTexture(GL_TEXTURE_2D, glTextureId)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 4) // TODO
     val compType = GlUtil.getComponentType(format)
@@ -139,7 +117,6 @@ class JvmTexture(val config: Config, data: TextureData)(using g: Graphics, facto
       }
     }
     if (config.flags.has(Texture.Flag.Cubemap)) {
-      // for (i<-0 until 6) texImage()
       ???
     } else {
       texImage(GL_TEXTURE_2D)

@@ -30,8 +30,6 @@ object JvmShaderProgram {
 class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) extends ShaderProgram {
   val vertexShader = config.vertexShader.asInstanceOf[JvmShaderObject]
   val fragmentShader = config.fragmentShader.asInstanceOf[JvmShaderObject]
-  // vertexShader.checkState()
-  // fragmentShader.checkState()
 
   def bindAttribute(index: Int, attributeName: String): Unit = ???
 
@@ -44,16 +42,11 @@ class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) exte
   glAttachShader(glProgram, vertexShader.glShader)
   glAttachShader(glProgram, fragmentShader.glShader)
 
-  glBindAttribLocation(glProgram, 0, "a_position")
-  //  glBindAttribLocation(glProgram, 1, "a_color")
-
   val errorBuffer = new StringBuffer()
   var attributeMap: Map[Int, ShaderAttribute] = _
   var attribNames: Map[String, ShaderAttribute] = _
   var uniformMap: Map[String, ShaderUniform] = _
   var uniformArrays: Map[String, IndexedSeq[ShaderUniform]] = _
-
-  // glBindAttribLocation(program, index, attributeName)
 
   link()
 
@@ -68,13 +61,10 @@ class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) exte
   }
 
   def link() = {
-    //val result = new Array[Int](3)
 
     def check(parameter: Int, operation: String) = {
       if (glGetProgrami(glProgram, parameter) == GL_FALSE) {
         errorBuffer.append(s"Shader program $operation failed:\n")
-        //val length = glGetProgrami(glProgram, GL_INFO_LOG_LENGTH)
-        //val logBytes = new Array[Byte](result(0)+1)
         val log = glGetProgramInfoLog(glProgram)
         Log("Info: " + log)
         errorBuffer.append(log)
@@ -91,9 +81,7 @@ class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) exte
     check(GL_VALIDATE_STATUS, "validate")
     val attLen = glGetProgrami(glProgram, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH)
     val uniLen = glGetProgrami(glProgram, GL_ACTIVE_UNIFORM_MAX_LENGTH)
-    //val nameArray = new Array[Byte](Math.max(result(0), result(1)))
 
-    // validate that all attributes are bound
     val attributeCount = glGetProgrami(glProgram, GL_ACTIVE_ATTRIBUTES)
     // Log("Attributes in shader program " + glProgram + ": " + attributeCount)
     val attribs = mutable.Map[Int, ShaderAttribute]()
@@ -102,19 +90,16 @@ class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) exte
       val typ = BufferUtils.createIntBuffer(1)
       val name = glGetActiveAttrib(glProgram, i, size, typ)
       val location = glGetAttribLocation(glProgram, name)
-      //      assert(location == boundIndex)
       val attribute = new ShaderAttribute(location, name, size.get(0), typ.get(0))
       attribs.put(location, attribute)
-      //      Log("  Attribute " + attribute)
     }
     attributeMap = attribs.toMap
     attribNames = attributeMap.values.map(a => a.name -> a).toMap
-    //    Log(" Attributes " + attributes);
     // find uniforms
     val uniformCount = glGetProgrami(glProgram, GL_ACTIVE_UNIFORMS);
-    //    Log("Uniforms in shader program " + glProgram + ": " + uniformCount);
+    // Log("Uniforms in shader program " + glProgram + ": " + uniformCount);
     val unis = mutable.Map[String, ShaderUniform]()
-    for (i ← 0 until uniformCount) {
+    for (i <- 0 until uniformCount) {
       val size = BufferUtils.createIntBuffer(1)
       val typ = BufferUtils.createIntBuffer(1)
       val name = glGetActiveUniform(glProgram, i, 256, size, typ)
@@ -126,8 +111,6 @@ class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) exte
       //Log("  Uniform " + i + ", " + name);
     }
     uniformMap = unis.toMap
-
-    // Log("Linked shader " + toString())
   }
 
   def textureUnit(textureUnit: Int, texture: Texture) = {
@@ -170,7 +153,6 @@ class JvmShaderProgram(config: Config)(using factory: ShaderProgramFactory) exte
     buf.prepareRender()
     glEnableVertexAttribArray(index)
     glVertexAttribPointer(index, numComponents, buf.glType, buf.normalized, 0, 0)
-    //    RRenderer.checkError()
     val attribute = attributeMap(index)
     attribute.value = buffer.toString()
     attribute.debugSize = {

@@ -37,7 +37,7 @@ class Mandelbrot(val platform: Platform) extends Module {
   given g: Graphics = display.graphics
 
   /** Select painter code. */
-  val painter = if (false) new ShaderPainter else new TexturePainter
+  val painter = if (true) new ShaderPainter else new TexturePainter
 
   val iterations = 400
   var pointerStart = Vec2F.Zero
