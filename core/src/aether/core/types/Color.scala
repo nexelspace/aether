@@ -2,7 +2,7 @@ package aether.core.types
 
 import scala.language.implicitConversions
 import aether.core.types.Vec4F
-import aether.core.math.VMathI
+import aether.core.math.MathI
 import aether.core.util.Strings
 
 object Color {
@@ -70,7 +70,7 @@ class Color(val argb: Int) extends AnyVal {
   def rgba = (argb << 8) | (argb >>>24)
 
   /** HSL lightness component. */
-  def lightness: Float = (VMathI.max(r, g, b) + VMathI.min(r, g, b)) / 510f
+  def lightness: Float = (MathI.max(r, g, b) + MathI.min(r, g, b)) / 510f
 
   override def toString: String = "#" + Strings.toHex(argb, 8)
 

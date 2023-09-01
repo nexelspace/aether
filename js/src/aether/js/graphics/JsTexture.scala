@@ -3,7 +3,7 @@ package aether.js.graphics
 import aether.js.buffers.JsBuffer
 import org.scalajs.dom.raw.{WebGLRenderingContext => GL}
 import org.scalajs.dom.Image
-import aether.core.math.VMathI
+import aether.core.math.MathI
 import aether.core.platform.Resource
 import aether.core.platform.Log
 import aether.core.platform.Dispatcher
@@ -29,7 +29,7 @@ import scala.scalajs.js.typedarray.Uint8ClampedArray
 
 object JsTexture {
 
-  def nextPOT(v: Int) = 1 << (VMathI.log2(v - 1) + 1)
+  def nextPOT(v: Int) = 1 << (MathI.log2(v - 1) + 1)
   def isPOT(size: Vec2I) = Bits.ones(size.x) == 1 && Bits.ones(size.y) == 1
 
   lazy val copyCanvas = dom.document.createElement("canvas").asInstanceOf[HTMLCanvasElement]

@@ -1,39 +1,39 @@
 package aether.core.util
 
 import aether.core.types.Vec3D
-import aether.core.math.VMathF
-import aether.core.math.VMathD
+import aether.core.math.MathF
+import aether.core.math.MathD
 
 object Colors {
 
   def rgb(r: Int, g: Int, b: Int): Int = 0xff000000 | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff)
 
   def argb(a: Float, r: Float, g: Float, b: Float): Int = {
-    (VMathF.clamp(a * 255, 255).toInt << 24) |
-      (VMathF.clamp(r * 255, 255).toInt << 16) |
-      (VMathF.clamp(g * 255, 255).toInt << 8) |
-      VMathF.clamp(b * 255, 255).toInt
+    (MathF.clamp(a * 255, 255).toInt << 24) |
+      (MathF.clamp(r * 255, 255).toInt << 16) |
+      (MathF.clamp(g * 255, 255).toInt << 8) |
+      MathF.clamp(b * 255, 255).toInt
   }
 
   def argb(a: Double, r: Double, g: Double, b: Double): Int =
-    (VMathD.clamp(a * 255, 255).toInt << 24) |
-      (VMathD.clamp(r * 255, 255).toInt << 16) |
-      (VMathD.clamp(g * 255, 255).toInt << 8) |
-      VMathD.clamp(b * 255, 255).toInt
+    (MathD.clamp(a * 255, 255).toInt << 24) |
+      (MathD.clamp(r * 255, 255).toInt << 16) |
+      (MathD.clamp(g * 255, 255).toInt << 8) |
+      MathD.clamp(b * 255, 255).toInt
 
   def rgb(r: Float, g: Float, b: Float): Int =
     0xff000000 |
-      (VMathF.clamp(r * 255, 255).toInt << 16) |
-      (VMathF.clamp(g * 255, 255).toInt << 8) |
-      VMathF.clamp(b * 255, 255).toInt
+      (MathF.clamp(r * 255, 255).toInt << 16) |
+      (MathF.clamp(g * 255, 255).toInt << 8) |
+      MathF.clamp(b * 255, 255).toInt
 
   def rgb(v: Vec3D): Int = rgb(v.x, v.y, v.z)
 
   def rgb(r: Double, g: Double, b: Double): Int = {
     0xff000000 |
-      (VMathD.clamp(r * 255, 255).toInt << 16) |
-      (VMathD.clamp(g * 255, 255).toInt << 8) |
-      VMathD.clamp(b * 255, 255).toInt
+      (MathD.clamp(r * 255, 255).toInt << 16) |
+      (MathD.clamp(g * 255, 255).toInt << 8) |
+      MathD.clamp(b * 255, 255).toInt
   }
 
   def argb(a: Int, r: Int, g: Int, b: Int): Int =
@@ -66,11 +66,11 @@ object Colors {
     * @return RGB color as 0x00rrggbb
     */
   def hsl(h: Float, s: Float, l: Float, alpha: Float = 1): Int = {
-    val sc = VMathF.clamp(s, 1)
-    val lc = VMathF.clamp(l, 1)
+    val sc = MathF.clamp(s, 1)
+    val lc = MathF.clamp(l, 1)
     val q  = if (lc < .5f) lc * (1f + sc) else lc + sc - lc * sc
     val p  = 2f * lc - q
-    def hue2rgb(t: Float) = VMathF.mod(t, 1) match {
+    def hue2rgb(t: Float) = MathF.mod(t, 1) match {
       case tm if (tm < 1f / 6f) => p + (q - p) * 6 * tm
       case tm if (tm < 1f / 2f) => q
       case tm if (tm < 2f / 3f) => p + (q - p) * (2f / 3f - tm) * 6

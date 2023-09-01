@@ -19,7 +19,7 @@ import aether.core.types.Vec2I
 import aether.core.platform.Event
 import aether.core.platform.Module
 import aether.core.platform.Module.*
-import aether.core.math.VMathD.Log2
+import aether.core.math.MathD.Log2
 import aether.core.platform.Log
 
 object JvmDisplay extends Module {

@@ -1,7 +1,6 @@
 package aether.core.math
-import aether.core.math.VMath
 
-object VMathD extends VMath[Double] {
+object MathD extends MathBase[Double] {
 
   val Zero = 0
   val One = 1

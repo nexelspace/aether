@@ -4,13 +4,13 @@ import math.Numeric.Implicits.infixNumericOps
 import math.Fractional.Implicits.infixFractionalOps
 import math.Integral.Implicits.infixIntegralOps
 import math.Ordering.Implicits.infixOrderingOps
-import aether.core.math.VMathF
-import aether.core.math.VMathD
-import aether.core.math.VMath
-import aether.core.math.VMathI
+import aether.core.math.MathF
+import aether.core.math.MathD
+import aether.core.math.MathBase
+import aether.core.math.MathI
 import scala.annotation.targetName
 
-trait Vec2[T](using vmath: VMath[T], num: Numeric[T]) extends IndexedSeq[T] {
+trait Vec2[T](using Math: MathBase[T], num: Numeric[T]) extends IndexedSeq[T] {
   val x: T
   val y: T
 
@@ -109,7 +109,7 @@ object Vec2I {
 
 case class Vec2I(x: Int, y: Int) extends Vec2[Int] {
 
-  val vmath = VMathI
+  val Math = MathI
   type T = Int
   type V = Vec2I
 
@@ -146,31 +146,31 @@ case class Vec2I(x: Int, y: Int) extends Vec2[Int] {
   inline def >=(v: V): Boolean = and(v, (a, b) => a >= b)
 
   // -- Common Functions
-  inline def abs: V = apply(vmath.abs(_))
-  inline def sign: V = apply(vmath.sign(_))
-  inline def floor: V = apply(vmath.floor(_))
-  inline def ceil: V = apply(vmath.ceil(_))
-  inline def mod(v: V): V = apply(v, vmath.mod(_, _))
-  inline def min(v: V): V = apply(v, vmath.min(_, _))
-  inline def max(v: V): V = apply(v, vmath.max(_, _))
-  inline def clamp(minVal: V, maxVal: V): V = apply(minVal, maxVal, vmath.clamp(_, _, _))
-  inline def mix(v: V, a: V): V = apply(v, a, vmath.mix(_, _, _))
-  inline def step(edge: V): V = apply(edge, vmath.step(_, _))
-  inline def smoothstep(edge0: V, edge1: V): V = apply(edge0, edge1, vmath.smoothstep(_, _, _))
-  inline def mod(s: T): V = apply(vmath.mod(_, s))
-  inline def min(s: T): V = apply(vmath.min(_, s))
-  inline def max(s: T): V = apply(vmath.max(_, s))
-  inline def clamp(minVal: T, maxVal: T): V = apply(vmath.clamp(_, minVal, maxVal))
-  inline def mix(v: V, a: T): V = apply(v, vmath.mix(_, _, a))
-  inline def step(edge: T): V = apply(vmath.step(_, edge))
-  inline def smoothstep(edge0: T, edge1: T): V = apply(vmath.smoothstep(_, edge0, edge1))
+  inline def abs: V = apply(Math.abs(_))
+  inline def sign: V = apply(Math.sign(_))
+  inline def floor: V = apply(Math.floor(_))
+  inline def ceil: V = apply(Math.ceil(_))
+  inline def mod(v: V): V = apply(v, Math.mod(_, _))
+  inline def min(v: V): V = apply(v, Math.min(_, _))
+  inline def max(v: V): V = apply(v, Math.max(_, _))
+  inline def clamp(minVal: V, maxVal: V): V = apply(minVal, maxVal, Math.clamp(_, _, _))
+  inline def mix(v: V, a: V): V = apply(v, a, Math.mix(_, _, _))
+  inline def step(edge: V): V = apply(edge, Math.step(_, _))
+  inline def smoothstep(edge0: V, edge1: V): V = apply(edge0, edge1, Math.smoothstep(_, _, _))
+  inline def mod(s: T): V = apply(Math.mod(_, s))
+  inline def min(s: T): V = apply(Math.min(_, s))
+  inline def max(s: T): V = apply(Math.max(_, s))
+  inline def clamp(minVal: T, maxVal: T): V = apply(Math.clamp(_, minVal, maxVal))
+  inline def mix(v: V, a: T): V = apply(v, Math.mix(_, _, a))
+  inline def step(edge: T): V = apply(Math.step(_, edge))
+  inline def smoothstep(edge0: T, edge1: T): V = apply(Math.smoothstep(_, edge0, edge1))
 
   // -- Geometric Functions
   inline def normSq: T = dot(this)
-  inline def norm: T = vmath.sqrt(normSq)
+  inline def norm: T = Math.sqrt(normSq)
   inline def normalize: V = if (isZero) this else this / norm
   inline def distanceSq(to: V): T = (to - this).normSq
-  inline def distance(to: V): T = vmath.sqrt(distanceSq(to))
+  inline def distance(to: V): T = Math.sqrt(distanceSq(to))
 
 }
 
@@ -184,7 +184,7 @@ object Vec2F {
 }
 
 case class Vec2F(x: Float, y: Float) extends Vec2[Float] {
-  val vmath = VMathF
+  val Math = MathF
   type T = Float
   type V = Vec2F
 
@@ -215,31 +215,31 @@ case class Vec2F(x: Float, y: Float) extends Vec2[Float] {
   inline def >=(v: V): Boolean = and(v, (a, b) => a >= b)
 
   // -- Common Functions
-  inline def abs: V = apply(vmath.abs(_))
-  inline def sign: V = apply(vmath.sign(_))
-  inline def floor: V = apply(vmath.floor(_))
-  inline def ceil: V = apply(vmath.ceil(_))
-  inline def mod(v: V): V = apply(v, vmath.mod(_, _))
-  inline def min(v: V): V = apply(v, vmath.min(_, _))
-  inline def max(v: V): V = apply(v, vmath.max(_, _))
-  inline def clamp(minVal: V, maxVal: V): V = apply(minVal, maxVal, vmath.clamp(_, _, _))
-  inline def mix(v: V, a: V): V = apply(v, a, vmath.mix(_, _, _))
-  inline def step(edge: V): V = apply(edge, vmath.step(_, _))
-  inline def smoothstep(edge0: V, edge1: V): V = apply(edge0, edge1, vmath.smoothstep(_, _, _))
-  inline def mod(s: T): V = apply(vmath.mod(_, s))
-  inline def min(s: T): V = apply(vmath.min(_, s))
-  inline def max(s: T): V = apply(vmath.max(_, s))
-  inline def clamp(minVal: T, maxVal: T): V = apply(vmath.clamp(_, minVal, maxVal))
-  inline def mix(v: V, a: T): V = apply(v, vmath.mix(_, _, a))
-  inline def step(edge: T): V = apply(vmath.step(_, edge))
-  inline def smoothstep(edge0: T, edge1: T): V = apply(vmath.smoothstep(_, edge0, edge1))
+  inline def abs: V = apply(Math.abs(_))
+  inline def sign: V = apply(Math.sign(_))
+  inline def floor: V = apply(Math.floor(_))
+  inline def ceil: V = apply(Math.ceil(_))
+  inline def mod(v: V): V = apply(v, Math.mod(_, _))
+  inline def min(v: V): V = apply(v, Math.min(_, _))
+  inline def max(v: V): V = apply(v, Math.max(_, _))
+  inline def clamp(minVal: V, maxVal: V): V = apply(minVal, maxVal, Math.clamp(_, _, _))
+  inline def mix(v: V, a: V): V = apply(v, a, Math.mix(_, _, _))
+  inline def step(edge: V): V = apply(edge, Math.step(_, _))
+  inline def smoothstep(edge0: V, edge1: V): V = apply(edge0, edge1, Math.smoothstep(_, _, _))
+  inline def mod(s: T): V = apply(Math.mod(_, s))
+  inline def min(s: T): V = apply(Math.min(_, s))
+  inline def max(s: T): V = apply(Math.max(_, s))
+  inline def clamp(minVal: T, maxVal: T): V = apply(Math.clamp(_, minVal, maxVal))
+  inline def mix(v: V, a: T): V = apply(v, Math.mix(_, _, a))
+  inline def step(edge: T): V = apply(Math.step(_, edge))
+  inline def smoothstep(edge0: T, edge1: T): V = apply(Math.smoothstep(_, edge0, edge1))
 
   // -- Geometric Functions
   inline def normSq: T = dot(this)
-  inline def norm: T = vmath.sqrt(normSq)
+  inline def norm: T = Math.sqrt(normSq)
   inline def normalize: V = if (isZero) this else this / norm
   inline def distanceSq(to: V): T = (to - this).normSq
-  inline def distance(to: V): T = vmath.sqrt(distanceSq(to))
+  inline def distance(to: V): T = Math.sqrt(distanceSq(to))
 }
 
 object Vec2D {
@@ -252,7 +252,7 @@ object Vec2D {
 }
 
 case class Vec2D(x: Double, y: Double) extends Vec2[Double] {
-  val vmath = VMathD
+  val Math = MathD
   type T = Double
   type V = Vec2D
 
@@ -283,29 +283,29 @@ case class Vec2D(x: Double, y: Double) extends Vec2[Double] {
   inline def >=(v: V): Boolean = and(v, (a, b) => a >= b)
 
   // -- Common Functions
-  inline def abs: V = apply(vmath.abs(_))
-  inline def sign: V = apply(vmath.sign(_))
-  inline def floor: V = apply(vmath.floor(_))
-  inline def ceil: V = apply(vmath.ceil(_))
-  inline def mod(v: V): V = apply(v, vmath.mod(_, _))
-  inline def min(v: V): V = apply(v, vmath.min(_, _))
-  inline def max(v: V): V = apply(v, vmath.max(_, _))
-  inline def clamp(minVal: V, maxVal: V): V = apply(minVal, maxVal, vmath.clamp(_, _, _))
-  inline def mix(v: V, a: V): V = apply(v, a, vmath.mix(_, _, _))
-  inline def step(edge: V): V = apply(edge, vmath.step(_, _))
-  inline def smoothstep(edge0: V, edge1: V): V = apply(edge0, edge1, vmath.smoothstep(_, _, _))
-  inline def mod(s: T): V = apply(vmath.mod(_, s))
-  inline def min(s: T): V = apply(vmath.min(_, s))
-  inline def max(s: T): V = apply(vmath.max(_, s))
-  inline def clamp(minVal: T, maxVal: T): V = apply(vmath.clamp(_, minVal, maxVal))
-  inline def mix(v: V, a: T): V = apply(v, vmath.mix(_, _, a))
-  inline def step(edge: T): V = apply(vmath.step(_, edge))
-  inline def smoothstep(edge0: T, edge1: T): V = apply(vmath.smoothstep(_, edge0, edge1))
+  inline def abs: V = apply(Math.abs(_))
+  inline def sign: V = apply(Math.sign(_))
+  inline def floor: V = apply(Math.floor(_))
+  inline def ceil: V = apply(Math.ceil(_))
+  inline def mod(v: V): V = apply(v, Math.mod(_, _))
+  inline def min(v: V): V = apply(v, Math.min(_, _))
+  inline def max(v: V): V = apply(v, Math.max(_, _))
+  inline def clamp(minVal: V, maxVal: V): V = apply(minVal, maxVal, Math.clamp(_, _, _))
+  inline def mix(v: V, a: V): V = apply(v, a, Math.mix(_, _, _))
+  inline def step(edge: V): V = apply(edge, Math.step(_, _))
+  inline def smoothstep(edge0: V, edge1: V): V = apply(edge0, edge1, Math.smoothstep(_, _, _))
+  inline def mod(s: T): V = apply(Math.mod(_, s))
+  inline def min(s: T): V = apply(Math.min(_, s))
+  inline def max(s: T): V = apply(Math.max(_, s))
+  inline def clamp(minVal: T, maxVal: T): V = apply(Math.clamp(_, minVal, maxVal))
+  inline def mix(v: V, a: T): V = apply(v, Math.mix(_, _, a))
+  inline def step(edge: T): V = apply(Math.step(_, edge))
+  inline def smoothstep(edge0: T, edge1: T): V = apply(Math.smoothstep(_, edge0, edge1))
 
   // -- Geometric Functions
   inline def normSq: T = dot(this)
-  inline def norm: T = vmath.sqrt(normSq)
+  inline def norm: T = Math.sqrt(normSq)
   inline def normalize: V = if (isZero) this else this / norm
   inline def distanceSq(to: V): T = (to - this).normSq
-  inline def distance(to: V): T = vmath.sqrt(distanceSq(to))
+  inline def distance(to: V): T = Math.sqrt(distanceSq(to))
 }

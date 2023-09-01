@@ -1,6 +1,6 @@
 package aether.core.types
 
-import aether.core.math.VMathF
+import aether.core.math.MathF
 
 /** Less canonical collection of Vec extensions.
   */
@@ -60,8 +60,8 @@ object VecExt {
   }
 
   extension (v: Vec3F) {
-    def max = VMathF.max(v.x, v.y, v.z)
-    def min = VMathF.min(v.x, v.y, v.z)
+    def max = MathF.max(v.x, v.y, v.z)
+    def min = MathF.min(v.x, v.y, v.z)
 
     def floor = Vec3F(v.x.floor, v.y.floor, v.z.floor)
     def floorInt = Vec3I(v.x.floor.toInt, v.y.floor.toInt, v.z.floor.toInt)
@@ -79,20 +79,20 @@ object VecExt {
     def toVec3I = Vec3I(v.x.toInt, v.y.toInt, v.z.toInt)
 
     def rotateX(rad: Float): Vec3F = {
-      val cos = VMathF.cos(rad)
-      val sin = VMathF.sin(rad)
+      val cos = MathF.cos(rad)
+      val sin = MathF.sin(rad)
       Vec3F(v.x, cos * v.y - sin * v.z, sin * v.y + cos * v.z)
     }
 
     def rotateY(rad: Float): Vec3F = {
-      val cos = VMathF.cos(rad)
-      val sin = VMathF.sin(rad)
+      val cos = MathF.cos(rad)
+      val sin = MathF.sin(rad)
       Vec3F(cos * v.x - sin * v.z, v.y, sin * v.x + cos * v.z)
     }
 
     def rotateZ(rad: Float): Vec3F = {
-      val cos = VMathF.cos(rad)
-      val sin = VMathF.sin(rad)
+      val cos = MathF.cos(rad)
+      val sin = MathF.sin(rad)
       Vec3F(cos * v.x - sin * v.y, sin * v.x + cos * v.y, v.z)
     }
   }

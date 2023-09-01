@@ -1,6 +1,6 @@
 package aether.core.types
 
-import aether.core.math.VMathF
+import aether.core.math.MathF
 import aether.core.types.*
 
 object Mat2F {
@@ -14,8 +14,8 @@ object Mat2F {
   def diagonal(s: Float) = new Mat2F(s, 0, 0, s)
   def diagonal(x: Float, y: Float, z: Float) = new Mat2F(x, 0, 0, y)
   def rotation(rads: Float) = {
-    val cos = VMathF.cos(rads)
-    val sin = VMathF.sin(rads)
+    val cos = MathF.cos(rads)
+    val sin = MathF.sin(rads)
     Mat2F(cos, sin, -sin, cos)
   }
 }

@@ -1,12 +1,12 @@
 package aether.core.math
 
-object VMath {
-  given mathI: VMath[Int] = VMathI
-  given mathF: VMath[Float] = VMathF
-  given mathD: VMath[Double] = VMathD  
+object MathBase {
+  given mathI: MathBase[Int] = MathI
+  given mathF: MathBase[Float] = MathF
+  given mathD: MathBase[Double] = MathD
 }
 
-trait VMath[T] {
+trait MathBase[T] {
 
   val Zero: T
   val One: T

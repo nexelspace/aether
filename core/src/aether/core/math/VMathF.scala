@@ -2,7 +2,7 @@ package aether.core.math
 
 import aether.core.types.Vec3F
 
-object VMathF extends VMath[Float] {
+object MathF extends MathBase[Float] {
 
   val Zero = 0
   val One = 1

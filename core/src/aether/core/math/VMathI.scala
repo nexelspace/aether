@@ -1,8 +1,8 @@
 package aether.core.math
-import aether.core.math.VMath
+
 import aether.core.util.Bits
 
-object VMathI extends VMath[Int] {
+object MathI extends MathBase[Int] {
 
   val Zero = 0
   val One = 1
