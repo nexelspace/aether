@@ -71,7 +71,7 @@ object server extends ScalaModule {
   def scalaVersion = scalaV
   def moduleDeps = Seq(core, app)
   // def scalacOptions = Seq("-Wunused:imports")
-  def mainClass = Some("space.nexel.aether.server.Server")
+  def mainClass = Some("aether.server.Server")
   def resources = T.sources {
     val out = os.pwd / "out" / "server" / "resources"
     copy(js.fastLinkJS().dest.path, out / "scripts")
