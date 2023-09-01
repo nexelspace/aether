@@ -3,7 +3,7 @@ precision highp float;
 precision highp int;
 
 uniform vec2 center;
-uniform float scale;
+uniform vec2 scale;
 uniform int iter;
 
 in vec2 v_coord;

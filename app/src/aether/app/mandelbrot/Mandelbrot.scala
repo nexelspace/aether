@@ -89,10 +89,10 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   def translateScreen(t: Vec2F) = {
-    center = center + (t / size.toVec2F * 2) * scale
+    center = center + (t / size.y * 2) * scale
   }
 
-  def screenToUnit(screen: Vec2F) = screen / size.toVec2F * 2 - 1
+  def screenToUnit(screen: Vec2F) = screen / size.y * 2 - 1
 
   abstract class Painter {
     def init(): Unit
@@ -127,7 +127,7 @@ class Mandelbrot(val platform: Platform) extends Module {
       program.get.foreach { program =>
         program.attributeBuffer("a_position", vertexBuffer.buffer, vertexBuffer.numComponents)
         program.uniform("iter").get.putI(iterations)
-        program.uniform("scale").get.putF(scale)
+        program.uniform("scale").get.put2F(scale / size.y * size.x, scale)
         program.uniform("center").get.put2F(center)
         program.draw(ShaderProgram.Mode.Triangles, 0, 6)
       }
