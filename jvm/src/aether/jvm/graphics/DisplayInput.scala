@@ -9,6 +9,7 @@ import aether.core.types.Vec2I
 import aether.core.platform.Dispatcher
 import aether.core.input.KeyEvent
 import aether.core.input.KeyEvent.CharEvent
+import aether.core.platform.Log
 
 class DisplayInput(display: JvmDisplay, dispatcher: Dispatcher) {
 
@@ -72,8 +73,7 @@ class DisplayInput(display: JvmDisplay, dispatcher: Dispatcher) {
   }
 
   def windowSizeCallback(window: Long, width: Int, height: Int) = {
-    display.size_ = Vec2I(width, height)
-    dispatcher.add(Resize(display, display.size))
+    dispatcher.add(Resize(display, Vec2I(width, height)))
   }
 
   def windowFocusCallback(window: Long, focused: Boolean) = {

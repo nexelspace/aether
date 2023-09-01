@@ -37,7 +37,8 @@ object Mandelbrot {
 class Mandelbrot(val platform: Platform) extends Module {
   given Platform = platform
   given Dispatcher = platform.dispatcher
-  val display = Display(Config.dispSize)
+  val display = Display(Config.dispSize, platform.name == Platform.Name.Js)
+  def size = display.size
   given g: Graphics = display.graphics
 
   /** Select painter code. */
@@ -49,7 +50,7 @@ class Mandelbrot(val platform: Platform) extends Module {
   var scale = 4.0f
   var center = Vec2F(-0.01f, -0.01f)
 
-  lazy val canvas = ShaderCanvas(display.size)
+  lazy val canvas = ShaderCanvas(size)
 
   override def event(event: Event) = {
     event match {
@@ -59,6 +60,8 @@ class Mandelbrot(val platform: Platform) extends Module {
       case u: Module.Update =>
       case Display.Paint(disp) =>
         painter.paint()
+      case Display.Resize(disp, size: Vec2I) =>
+        painter.resize(size)
       case MouseButton(true, pos, _) =>
         pointerStart = pointerUpdate(pos)
       case MouseMove(true, pos, _) =>
@@ -86,13 +89,14 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   def translateScreen(t: Vec2F) = {
-    center = center + (t / Config.size * 2) * scale
+    center = center + (t / size.toVec2F * 2) * scale
   }
 
-  def screenToUnit(screen: Vec2F) = screen / Config.size * 2 - 1
+  def screenToUnit(screen: Vec2F) = screen / size.toVec2F * 2 - 1
 
   abstract class Painter {
     def init(): Unit
+    def resize(size: Vec2I): Unit
     def paint(): Unit
   }
 
@@ -117,6 +121,8 @@ class Mandelbrot(val platform: Platform) extends Module {
       vertexBuffer.put2F(+1, +1)
     }
 
+    def resize(size: Vec2I)= {}
+
     override def paint() = {
       program.get.foreach { program =>
         program.attributeBuffer("a_position", vertexBuffer.buffer, vertexBuffer.numComponents)
@@ -129,20 +135,27 @@ class Mandelbrot(val platform: Platform) extends Module {
   }
 
   class TexturePainter extends Painter {
-    val dispTex = Texture(Texture.Flag.Writable, Config.dispSize.x, Config.dispSize.y)
+    var dispTex = Texture(Texture.Flag.Writable, size.x, size.y)
 
     override def init() = {}
 
+    def resize(size: Vec2I)= {
+      dispTex.release()
+      Log(s"Resize texture to $size")
+      dispTex = Texture(Texture.Flag.Writable, size.x, size.y)
+    }
+
     override def paint() = {
       updateTexture()
-      canvas.drawTexture(RectF(Vec2F.Zero, Config.dispSize.toVec2F), dispTex)
+      canvas.drawTexture(RectF(Vec2F.Zero, size.toVec2F), dispTex)
       canvas.flush()
     }
 
-    def updateTexture() = {
+    def updateTexture(): Unit = {
+      assert(dispTex.size == size, s"Texture size ${dispTex.size}, display: $size")
       for {
-        y <- 0 until Config.size
-        x <- 0 until Config.size
+        y <- 0 until size.y
+        x <- 0 until size.x
       } {
         val s = screenToUnit(Vec2F(x, y)) * scale + center
         val cr = s.x

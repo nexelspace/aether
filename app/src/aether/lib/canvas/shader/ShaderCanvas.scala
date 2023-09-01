@@ -27,7 +27,7 @@ object ShaderCanvas {
  
 }
 
-class ShaderCanvas(val view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity)(using g: Graphics) extends Canvas {
+class ShaderCanvas(var view: RectF, val tx: Tx2FAxis = Tx2FAxis.Identity)(using g: Graphics) extends Canvas {
 
   val buffer = new RenderBuffer(1024)
 

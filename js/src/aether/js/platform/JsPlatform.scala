@@ -7,6 +7,7 @@ import aether.js.graphics.JsDisplay
 import aether.core.base.HttpBase
 
 class JsPlatform extends Platform(Seq(JsDisplay)) {
+  val name = Platform.Name.Js
   val log = new Log {
     def apply(message: String) = {
       println(message)

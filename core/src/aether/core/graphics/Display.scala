@@ -30,7 +30,7 @@ object Display {
 
 
   def apply(config: Config)(using platform: Platform): Display = platform.displayFactory.create(config)
-  def apply(size: Vec2I)(using platform: Platform): Display = platform.displayFactory.create(Config(size = size))
+  def apply(size: Vec2I, fullscreen: Boolean = false)(using platform: Platform): Display = platform.displayFactory.create(Config(size, fullscreen))
 
 }
 

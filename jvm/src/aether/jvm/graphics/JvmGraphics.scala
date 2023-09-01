@@ -17,6 +17,7 @@ import org.lwjgl.opengl.GL30._
 import org.lwjgl.opengl.GL41._
 import aether.core.types.RectI
 import JvmGraphics.*
+import aether.core.platform.Log
 
 object JvmGraphics {
   lazy val frameBuffer = glGenFramebuffers()
@@ -35,6 +36,7 @@ class JvmGraphics extends Graphics {
 
   def render(disp: Display, callback: (Display) => Unit) = {
     target = disp
+    Log("Init render size "+target.size)
     initRendering(RectI(0, 0, target.size.x, target.size.y), true)
     glBindFramebuffer(GL_FRAMEBUFFER, 0)
 
@@ -58,7 +60,7 @@ class JvmGraphics extends Graphics {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE)
 
     // reset mutable state
-    // resetState()
+    resetState()
   }
 
   def setTargetDisplay(display: Display) = {

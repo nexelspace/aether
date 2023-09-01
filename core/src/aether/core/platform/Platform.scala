@@ -5,6 +5,11 @@ import Dispatcher.CallbackEvent
 
 object Platform {
   case class Update(time: Long) extends Event
+
+  enum Name {
+    case Jvm
+    case Js
+  }
 }
 
 trait Platform(modules: Seq[Module]) {
@@ -14,6 +19,7 @@ trait Platform(modules: Seq[Module]) {
   val dispatcher: Dispatcher = new Dispatcher()
   given Dispatcher = dispatcher
 
+  val name: Platform.Name
   val log: Log
   val base: Base
   val resourceBase: Base

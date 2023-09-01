@@ -19,6 +19,7 @@ class JsGraphics(val gl: GL) extends Graphics {
 
   def render(disp: Display, callback: (Display) => Unit) = {
     target = disp
+    resetState()
     callback(disp)
     target = null
   }

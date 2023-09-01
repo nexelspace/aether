@@ -1,5 +1,6 @@
 package aether.core.math
 import aether.core.math.VMath
+import aether.core.util.Bits
 
 object VMathI extends VMath[Int] {
 
@@ -61,7 +62,7 @@ object VMathI extends VMath[Int] {
 
   inline def exp2(x: Int): Int = ??? // Math.exp(x * Log2)
 
-  inline def log2(x: Int): Int = ??? // (Math.log(x) / Log2)
+  inline def log2(x: Int): Int = Bits.indexOfMSB(x)
 
   inline def sqrt(x: Int): Int = ??? // Math.sqrt(x)
 

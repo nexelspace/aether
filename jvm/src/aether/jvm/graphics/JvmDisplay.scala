@@ -48,6 +48,8 @@ object JvmDisplay extends Module {
       // Initialize GLFW. Most GLFW functions will not work before doing this.
       if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW")
     case e: Update =>
+    case Resize(disp, size) =>
+      disp.asInstanceOf[JvmDisplay].size_ = size
     case Uninit    =>
       // Terminate GLFW and free the error callback
       glfwTerminate()
@@ -71,7 +73,8 @@ class JvmDisplay(platform: Platform, val config: Config)(using factory: DisplayF
   // the window will be resizable
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
   // Create the window
-  val window = glfwCreateWindow(config.size.x, config.size.y, config.windowTitle, NULL, NULL)
+  val monitor = if (config.fullscreen) glfwGetPrimaryMonitor() else NULL
+  val window = glfwCreateWindow(config.size.x, config.size.y, config.windowTitle, monitor, NULL)
   if (window == NULL)
     throw new RuntimeException("Failed to create the GLFW window")
 

@@ -10,6 +10,7 @@ import aether.core.graphics.Display
 import java.nio.file.Paths
 
 class JvmPlatform() extends Platform(Seq(JvmDisplay)) {
+  val name = Platform.Name.Jvm
   val log = new Log {
     def apply(message: String) = {
       println(message)

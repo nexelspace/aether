@@ -50,6 +50,9 @@ class JsDisplay(val config: Config, canvas: HTMLCanvasElement)
     (using factory: DisplayFactory, dispatcher: Dispatcher) extends Display {
   given gl: GL = canvas.getContext("webgl2").asInstanceOf[GL]
 
+  resizeToWindow()
+  window.addEventListener("resize", (event) => resizeToWindow())
+
   JsEvents.initMouseEvents(canvas)
   JsEvents.initTouchEvents(canvas)
 
@@ -58,11 +61,13 @@ class JsDisplay(val config: Config, canvas: HTMLCanvasElement)
   def size: Vec2I = Vec2I(canvas.width, canvas.height)
 
   def resizeToWindow()(using dispatcher: Dispatcher) = {
-    val size = Vec2I(window.innerWidth.toInt, window.innerHeight.toInt)
-    // Log(s"resizeToWindow $size")
-    canvas.width = size.x
-    canvas.height = size.y
-    dispatcher.add(Display.Resize(this, size))
+    if (config.fullscreen) {
+      val size = Vec2I(window.innerWidth.toInt, window.innerHeight.toInt)
+      // Log(s"resizeToWindow $size")
+      canvas.width = size.x
+      canvas.height = size.y
+      dispatcher.add(Display.Resize(this, size))
+    }
   }
   
   def grabPointer(grab: Boolean): Unit = ???

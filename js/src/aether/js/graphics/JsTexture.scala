@@ -63,10 +63,11 @@ object JsTexture {
         case format                                                => sys.error(s"Unsupported texture format $format")
       }
       val pot = isPOT(config.size.get)
-      val size = if (pot) {
+      // automatic POT resize disabled
+      val size = if (false && pot) {
         config.size.get
       } else {
-        config.size.get(nextPOT)
+         config.size.get(nextPOT)
       }
       val typ = config.format.componentType
       Log(s"Create buffer $size, ${config.format}, ${config.format.bytesPerPixel}, ${typ.bytes}")
@@ -139,8 +140,7 @@ class JsTexture(val config: Config)(using graphics: Graphics, factory: TextureFa
   val glTexture = gl.createTexture()
 
   def isPowerOfTwo = JsTexture.isPOT(size)
-  assert(isPowerOfTwo, s"NPOT textures are not supported. $config")
-  Log(s"Create texture $size")
+  if (!isPowerOfTwo) Log(s"WARN: NPOT textures might not be supported.")
 
   def buffer: Option[JsBuffer[_]] = config.buffer.map(_.asInstanceOf[JsBuffer[_]])
 

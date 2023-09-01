@@ -10,7 +10,6 @@ object Graphics {
     def size: Vec2I
   }
 
-  
   implicit def flagToInt(flags: DepthTest): Int = flags.flags
   implicit def intToFlag(flags: Int): DepthTest = new DepthTest(flags)
 
@@ -72,6 +71,26 @@ trait Graphics {
   def cull_=(cull: Cull): Unit
   def depthTest_=(depthTest: DepthTest): Unit
   def filter_=(filter: Filter): Unit
+
+  def resetState() = {
+    viewport_=(null)
+    assert(viewport != null, "Nulling viewport should reset to display size")
+    clip = null
+    assert(clip != null, "Nulling clip should reset to viewport size")
+    depthTest = DepthTest.Write | DepthTest.Always
+    filter = Filter.Undefined
+    blend = Blend.Normal
+    cull = Cull.None
+  }
+
+  def setState(source: State) = {
+    if (viewport != source.viewport) viewport = source.viewport
+    if (clip != source.clip) clip = source.clip
+    if (depthTest != source.depthTest) depthTest = source.depthTest
+    if (filter != source.filter) filter = source.filter
+    if (blend != source.blend) blend = source.blend
+    if (cull != source.cull) cull = source.cull
+  }
 
   def target: RenderTarget
   def isTargetDisplay = target.isInstanceOf[Display]

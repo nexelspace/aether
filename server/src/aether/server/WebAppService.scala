@@ -15,9 +15,9 @@ class WebAppService {
   val logger = org.log4s.getLogger
 
   def page(app: String, pageTitle: String) = {
-    html(
-      head(meta(charset := "UTF-8"), title(pageTitle)),
-      body(
+    html(margin := "0 !important", padding := "0 !important")(
+      head(meta(charset := "UTF-8"), title(pageTitle), link(rel := "stylesheet", href := "/static/style.css")),
+      body(margin := "0 !important", padding := "0 !important")(
         // canvas(id := "display", width := "1024", height := "512"),
         script(`type` := "text/javascript", src := "/scripts/main.js"),
         script(s"window.onload = function(){ App.$app(); }")
