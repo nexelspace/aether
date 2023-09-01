@@ -19,6 +19,8 @@ class JvmPlatform() extends Platform(Seq(JvmDisplay)) {
   val wd = Paths.get("").toAbsolutePath().toString().replaceAll("\\\\", "/")
   val base = new FileBase(wd)
 
+  val resourceBase  = new FileBase("app/src")
+
   val displayFactory = JvmDisplay.factory(this)
 
   def run(loop: => Boolean): Unit = {

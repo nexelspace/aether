@@ -5,7 +5,7 @@
          ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
     <encoder>
       <!--<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>-->
-      <pattern>%d{HH:mm:ss} %-8.-8thread %-5.5level %-30.30logger{30}: %msg</pattern>
+      <pattern>%d{HH:mm:ss} %-8.-8thread %-5.5level %-30.30logger{30}: %msg%n</pattern>
     </encoder>
   </appender>
 
@@ -13,7 +13,7 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-   <logger name="io.me3d" level="DEBUG" />
+   <logger name="space.nexel.aether" level="DEBUG" />
    <logger name="org.http4s.server.message-failures" level="DEBUG" />
    
 </configuration>

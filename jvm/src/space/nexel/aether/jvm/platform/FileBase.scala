@@ -12,6 +12,7 @@ import space.nexel.aether.core.platform.Dispatcher
 import io.circe.parser.*
 import Base.*
 import java.io.File
+import space.nexel.aether.core.platform.Log
 
 class FileBase(basePath: String)(using dispatcher: Dispatcher) extends Base {
   def toUrl(path: String): String = s"file://$path"

@@ -16,9 +16,10 @@ import io.circe.parser._
 
 object JsHttpClient {
 
-  def loadBytes(url: String)(using dispatcher: Dispatcher) : Resource[Array[Byte]] = new Loader(url).loadBytes()
-  def loadJson(url: String)(using dispatcher: Dispatcher) : Resource[Json] = new Loader(url).loadJson()
-  def loadHeaders(url: String)(using dispatcher: Dispatcher) : Resource[Map[String, String]] = new Loader(url).loadHeaders()
+  def loadBytes(url: String)(using dispatcher: Dispatcher): Resource[Array[Byte]] = new Loader(url).loadBytes()
+  def loadJson(url: String)(using dispatcher: Dispatcher): Resource[Json] = new Loader(url).loadJson()
+  def loadHeaders(url: String)(using dispatcher: Dispatcher): Resource[Map[String, String]] =
+    new Loader(url).loadHeaders()
 
   import scala.scalajs.js.typedarray._
 
@@ -82,8 +83,8 @@ class JsHttpClient(using dispatcher: Dispatcher) extends HttpClient {
   }
 
   def loadString(url: String): Resource[String] = {
-    JsHttpClient.loadBytes(url).map {
-      array => new String(array, "UTF8").replace("\\r\\n", "\n").replaceAll("\\r", "\n")
+    JsHttpClient.loadBytes(url).map { array =>
+      new String(array, "UTF8").replace("\\r\\n", "\n").replaceAll("\\r", "\n")
     }
   }
 

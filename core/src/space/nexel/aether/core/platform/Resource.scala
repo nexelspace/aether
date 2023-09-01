@@ -3,11 +3,23 @@ package space.nexel.aether.core.platform
 import space.nexel.aether.core.base.Ref
 import javax.sound.midi.spi.MidiFileReader
 import scala.collection.mutable.ArrayBuffer
+import Resource.*
+import scala.annotation.nowarn
 
 object Resource {
+
+  enum State[T] {
+    case Loading()
+    case Error(msg: String)
+    case Loaded(value: T)
+  }
+
   trait Config {}
+
   trait Factory[T, C <: Config] {
+
     protected var resources = Set[T]()
+
     def instances: Seq[T] = resources.toSeq
 
     final def create(config: C): T = {
@@ -15,6 +27,7 @@ object Resource {
       resources += obj
       obj
     }
+
     final def load(ref: Ref, config: C)(using dispatcher: Dispatcher): Resource[T] = {
       val res = loadThis(ref, config)
       res.onChange { r =>
@@ -22,7 +35,9 @@ object Resource {
       }
       res
     }
+
     def createThis(config: C): T
+
     def loadThis(ref: Ref, config: C)(using dispatcher: Dispatcher): Resource[T] =
       Resource.error("Factory.load not supported")
 
@@ -30,7 +45,6 @@ object Resource {
       assert(resources.contains(resource))
       resources -= resource
     }
-
   }
 
   /** Create Resource indicating error. */
@@ -46,29 +60,34 @@ object Resource {
     res
   }
 
+  /** Convert Seq[Resource[T]] to Resource[Seq[T]]
+    *
+    * @param seq
+    * @param dispatcher
+    * @return
+    */
   def sequence[T](seq: Seq[Resource[T]])(using dispatcher: Dispatcher): Resource[Seq[T]] = {
     val res = new Resource[Seq[T]]()
-    val values = ArrayBuffer[T]()
     var error: Option[String] = None
-    var count = seq.size
-    seq.foreach { r =>
-      r.onChange { r =>
-        r.error match {
-          case Some(msg) =>
-            error = Some(msg)
-            count -= 1
-            if (count == 0) {
-              if (error.isDefined) res.error = error.get
-              else res.set(values.toSeq)
-            }
-          case None =>
-            values += r()
-            count -= 1
-            if (count == 0) {
-              if (error.isDefined) res.error = error.get
-              else res.set(values.toSeq)
-            }
-        }
+    var loadCount = seq.map(r => if (r.state == State.Loading()) 1 else 0).reduce(_ + _)
+    def loaded() = {
+      val error = seq.find(_.error.isDefined).flatMap(_.error)
+      if (error.isDefined) {
+        res.error = error.get
+      } else {
+        res.set(seq.map(_()))
+      }
+    }
+    if (loadCount == 0) {
+      loaded()
+    } else {
+      seq.foreach {
+        case r if (r.state == State.Loading()) =>
+          r.onChange { _ =>
+            loadCount -= 1
+            if (loadCount == 0) loaded()
+          }
+        case _ =>
       }
     }
     res
@@ -79,58 +98,64 @@ object Resource {
 /** Asynchronously loaded resource. May result in error.
   */
 class Resource[T]() {
-  private var res: Option[T] = None
-  private var errorMsg: Option[String] = None
+
+  private var state: State[T] = State.Loading()
+
   private val listeners = collection.mutable.Set[Resource[T] => _]()
 
   def error_=(msg: String)(using dispatcher: Dispatcher) = {
-    assert(res.isEmpty)
-    assert(errorMsg.isEmpty)
-    errorMsg = Some(msg)
+    assert(state == State.Loading())
+    state = State.Error(msg)
     dispatcher.dispatch {
       listeners.foreach(_(this))
     }
   }
 
-  def error = errorMsg
+  def error = state match {
+    case State.Error(msg) => Some(msg)
+    case _                => None
+  }
+
+  def get: Option[T] = state match {
+    case State.Loaded[T](value) => Some(value)
+    case _                      => None
+  }
+
+  def apply(): T = get.get
 
   def set(newRes: T)(using dispatcher: Dispatcher): Unit = {
-    assert(res.isEmpty)
-    assert(errorMsg.isEmpty)
-    res = Some(newRes)
+    assert(state == State.Loading())
+    state = State.Loaded(newRes)
     dispatcher.dispatch {
       listeners.foreach(_(this))
     }
   }
-
-  def get: Option[T] = res
-  def apply(): T = res.get
 
   def onChange(listener: Resource[T] => _): Resource[T] = {
     listeners += listener
-    if (res.isDefined || error.isDefined) listener(this)
+    if (state != State.Loading()) listener(this)
     this
   }
 
-  def map[U](f: T => U)(using dispatcher: Dispatcher): Resource[U] = {
-    val res = new Resource[U]()
-    get match {
-      case Some(value) => res.set(f(value))
-      case None        => res.errorMsg = errorMsg
+  def map[U](f: T => U, res: Resource[U] = new Resource[U]())(using dispatcher: Dispatcher): Resource[U] = {
+    state match {
+      case State.Error(msg)    => res.error = msg
+      case State.Loaded(value) => res.set(f(value))
+      case State.Loading()     => onChange(_ => map(f, res))
     }
     res
   }
 
-  def flatMap[U](f: T => Resource[U])(using dispatcher: Dispatcher): Resource[U] = {
-    val res = new Resource[U]()
-    get match {
-      case Some(value) => f(value).onChange(r => res.set(r()))
-      case None        => res.errorMsg = errorMsg
+  def flatMap[U](f: T => Resource[U], res: Resource[U] = new Resource[U]())(using
+      dispatcher: Dispatcher
+  ): Resource[U] = {
+    state match {
+      case State.Error(msg)       => res.error = msg
+      case State.Loaded[T](value) => f(value).onChange(r => res.set(r()))
+      case State.Loading()        => onChange(_ => flatMap(f, res))
     }
     res
   }
 
-  override def toString = if (res.isDefined) s"Resource:${res.get}"
-  else if (error.isDefined) s"Error:${error.get}"
-  else "Loading"
+  override def toString = s"Resource:$state"
 }

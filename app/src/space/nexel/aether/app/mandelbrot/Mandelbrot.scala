@@ -23,6 +23,7 @@ import space.nexel.aether.lib.canvas.shader.ShaderCanvas
 import space.nexel.aether.core.types.RectF
 import space.nexel.aether.core.platform.Resource
 import space.nexel.aether.core.platform.Dispatcher
+import space.nexel.aether.core.input.KeyEvent.Code.L
 
 object Mandelbrot {
 
@@ -48,7 +49,7 @@ class Mandelbrot(val platform: Platform) extends Module {
   var scale = 4.0f
   var center = Vec2F(-0.01f, -0.01f)
 
-  val canvas = ShaderCanvas(display.size)
+  lazy val canvas = ShaderCanvas(display.size)
 
   override def event(event: Event) = {
     event match {

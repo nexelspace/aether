@@ -38,5 +38,9 @@ class WebAppService {
       StaticFile.fromPath(Path(s"static/$file"), Some(req)).getOrElseF {
         StaticFile.fromResource(s"/static/$file", Some(req)).getOrElseF(NotFound())
       }
+    case req @ GET -> "resources" /: file =>
+      val path = Path(s"app/src/$file")
+      logger.debug(s"Get resource $path")
+      StaticFile.fromPath(path, Some(req)).getOrElseF(NotFound())
   }
 }

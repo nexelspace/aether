@@ -11,7 +11,7 @@ class HttpBase(http: HttpClient, baseUrl: String)(using dispatcher: Dispatcher) 
 
   def toUrl(path: String): String = s"$baseUrl/$path"
 
-  def base(path: String): Base = ???
+  def base(path: String): Base = HttpBase(http, s"$baseUrl/$path")
   def entry(path: String): Resource[Entry] = ???
   def list(pathDir: String): Resource[Seq[Entry]] = ???
 

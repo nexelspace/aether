@@ -12,7 +12,12 @@ class JsPlatform extends Platform(Seq(JsDisplay)) {
       println(message)
     }
   }
-  val base = new HttpBase(new JsHttpClient(), dom.window.location.origin)
+  val http = new JsHttpClient()
+  val origin = dom.window.location.origin
+  val base = new HttpBase(http, origin)
+  val resourceBase  = new HttpBase(new JsHttpClient(), s"$origin/resources")
+
+  val resourcePath: String = "resource"
 
   val displayFactory = JsDisplay.factory(dispatcher)
 

@@ -6,7 +6,7 @@ import space.nexel.aether.core.input.KeyEvent
 import scala.collection.mutable.ListBuffer
 
 object Dispatcher {
-  class CallbackEvent(callback: => Unit) extends Event
+  case class CallbackEvent(callback: () => Unit) extends Event
 }
 
 class Dispatcher {
@@ -27,7 +27,7 @@ class Dispatcher {
   }
   
   def dispatch(handler: => Unit): Unit = {
-    add(CallbackEvent(handler))
+    add(CallbackEvent(() => handler))
   }
 
   // common

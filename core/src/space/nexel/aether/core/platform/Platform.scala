@@ -1,6 +1,7 @@
 package space.nexel.aether.core.platform
 import space.nexel.aether.core.graphics.Display
 import space.nexel.aether.core.base.*
+import Dispatcher.CallbackEvent
 
 object Platform {
   case class Update(time: Long) extends Event
@@ -13,15 +14,13 @@ trait Platform(modules: Seq[Module]) {
   val dispatcher: Dispatcher = new Dispatcher()
   given Dispatcher = dispatcher
 
-  def log: Log
-  def base: Base
+  val log: Log
+  val base: Base
+  val resourceBase: Base
 
   def resource(source: Any): Base = {
-    //TODO
     val path = source.getClass().getName().split("\\.").dropRight(1).mkString("/")
-    val nb = s"app/src/$path"
-    Log(s"Resource base $nb")
-    base.base(nb)
+    resourceBase.base(path)
   }
 
   // Initialize system modules before instantiating App
@@ -50,6 +49,7 @@ trait Platform(modules: Seq[Module]) {
       var processEvents = true
       while (processEvents) {
         dispatcher.getEvent() match {
+          case Some(CallbackEvent(callback)) => callback()
           case Some(event) => mods.foreach(_.event(event))
           case None        => processEvents = false
         }
