@@ -27,40 +27,38 @@ object JsHttpClient {
     val req = new XMLHttpRequest()
     def error = s"Failed to load $url - ${req.status} ${req.statusText}"
 
-    def loadBytes(): Resource[Array[Byte]] = {
-      val res = new Resource[Array[Byte]]
-      req.open("GET", url, true)
-      req.responseType = "arraybuffer"
+    def load[T](method: String, resType: Option[String])(onload: Resource[T] => Unit): Resource[T] = {
+      val res = new Resource[T]
+      req.open(method, url, true)
+      resType.foreach(t => req.responseType = t)
       req.onload = { event =>
+        onload(res)
+      }
+      req.onerror = { event => res.error = error }
+      req.send()
+      res
+    }
+
+    def loadBytes(): Resource[Array[Byte]] = {
+      load("GET", Some("arraybuffer")) { res =>
         if (req.status == 200) {
           val array = int8Array2ByteArray(new Int8Array(req.response.asInstanceOf[ArrayBuffer]))
           res.set(array)
         } else res.error = error
       }
-      req.onerror = { event => res.error = error }
-      req.send()
-      res
     }
 
     def loadJson(): Resource[Json] = {
-      val res = new Resource[Json]
-      req.open("GET", url, true)
-      req.responseType = "json"
-      req.onload = { event =>
+      load("GET", Some("json")) { res =>
         if (req.status == 200) {
           val json = req.response.asInstanceOf[Json]
           res.set(json)
         } else res.error = error
       }
-      req.onerror = { event => res.error = error }
-      req.send()
-      res
     }
 
     def loadHeaders(): Resource[Map[String, String]] = {
-      val res = new Resource[Map[String, String]]
-      req.open("HEAD", url, true)
-      req.onload = { event =>
+      load("HEAD", None) { res =>
         val headers = req.getAllResponseHeaders()
         val arr = headers.trim().split("\r?\n|\r").toList
         val kv = for (line <- arr) yield {
@@ -69,9 +67,6 @@ object JsHttpClient {
         }
         res.set(kv.toMap)
       }
-      req.onerror = { event => res.error = error }
-      req.send()
-      res
     }
   }
 }
