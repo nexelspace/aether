@@ -106,9 +106,7 @@ class Resource[T]() {
   def error_=(msg: String)(using dispatcher: Dispatcher) = {
     assert(state == State.Loading())
     state = State.Error(msg)
-    dispatcher.dispatch {
-      listeners.foreach(_(this))
-    }
+    listeners.foreach(_(this))
   }
 
   def error = state match {
@@ -126,9 +124,7 @@ class Resource[T]() {
   def set(newRes: T)(using dispatcher: Dispatcher): Unit = {
     assert(state == State.Loading())
     state = State.Loaded(newRes)
-    dispatcher.dispatch {
-      listeners.foreach(_(this))
-    }
+    listeners.foreach(_(this))
   }
 
   def onChange(listener: Resource[T] => _): Resource[T] = {
