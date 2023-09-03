@@ -33,13 +33,13 @@ trait Platform(modules: Seq[Module]) {
   init()
 
   def init() = {
-    Log("Module init")
+    // Log("Module init")
     modules.foreach(_.event(Module.Init(this)))
   }
 
   // called by renderloop
   def uninit() = {
-    Log("Module uninit")
+    // Log("Module uninit")
     modules.reverse.foreach(_.event(Module.Uninit))
   }
 

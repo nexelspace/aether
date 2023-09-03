@@ -89,7 +89,7 @@ object Texture {
   }
 
   def apply(flags: Int, sizeX: Int, sizeY: Int, format: Format = Format.RGBA_8888)(using graphics: Graphics): Texture = {
-    graphics.textureFactory.create(Config(flags = flags, size = Some(Vec2I(sizeX, sizeY))))
+    graphics.textureFactory.create(Config(flags = flags, size = Some(Vec2I(sizeX, sizeY)), format = format))
   }
 }
 

@@ -28,16 +28,16 @@ class CanvasWidget(platform: Platform, res: Resources, state: State, var size: V
   scroll.pos = size / 2
   scroll.scale = 8
 
+  override def pick(transform: Vec2F, pos: Vec2F) = Seq(Widget.PickResult(this, transform))
+
   val draw = new MouseDraw() {
     def draw(pos: Vec2F) = {
       val p = scroll.txModel * pos
       state.paintCanvas.update(p.floorVec2I, state.color)
-      Log(s"Draw to canvas $pos ${state.color}")
     }
   }
 
   def event(event: Event) = {
-    Log(s"Canvas event $event")
     draw.drawEvent(event)
     import KeyEvent.Code._
     event match {
@@ -68,7 +68,6 @@ class CanvasWidget(platform: Platform, res: Resources, state: State, var size: V
     val prog = shader.pass.program.get
     for (canvas <- Seq(state.baseCanvas, state.changeCanvas, state.paintCanvas)) {
       if (canvas.canvasModified) {
-        Log("Update modified canvas")
         canvas.serializeQuad()
       }
       prog.uniform("iQuadS").foreach(_.putI(0))

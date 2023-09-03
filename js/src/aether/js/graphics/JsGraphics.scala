@@ -6,14 +6,14 @@ import aether.core.graphics.*
 import aether.core.graphics.Graphics.*
 import aether.core.platform.Log
 
-class JsGraphics(val gl: GL) extends Graphics {
+class JsGraphics(display: JsDisplay, val gl: GL) extends Graphics {
   given GL = gl
   val shaderProgramFactory = JsShaderProgram.factory
   val shaderObjectFactory = JsShaderObject.factory
   val shaderBufferFactory = JsShaderBuffer.factory
   val textureFactory = JsTexture.factory(this)
 
-  var target: RenderTarget = _
+  var target: RenderTarget = display
 
   // ---- public interface
 

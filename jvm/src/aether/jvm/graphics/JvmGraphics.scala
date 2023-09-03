@@ -24,7 +24,7 @@ object JvmGraphics {
 
 }
 
-class JvmGraphics extends Graphics {
+class JvmGraphics(display: JvmDisplay) extends Graphics {
   given Graphics = this
   val shaderProgramFactory = JvmShaderProgram.factory
   val shaderObjectFactory = JvmShaderObject.factory
@@ -32,7 +32,7 @@ class JvmGraphics extends Graphics {
   val textureFactory = JvmTexture.factory
 
   val dispScale = 1f
-  var target: RenderTarget = _
+  var target: RenderTarget = display
 
   def render(disp: Display, callback: (Display) => Unit) = {
     target = disp

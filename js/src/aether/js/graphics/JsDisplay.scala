@@ -56,7 +56,7 @@ class JsDisplay(val config: Config, canvas: HTMLCanvasElement)
   JsEvents.initMouseEvents(canvas)
   JsEvents.initTouchEvents(canvas)
 
-  val graphics = new JsGraphics(gl)
+  val graphics = new JsGraphics(this, gl)
   
   def size: Vec2I = Vec2I(canvas.width, canvas.height)
 

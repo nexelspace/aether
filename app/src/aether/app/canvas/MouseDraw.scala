@@ -16,13 +16,13 @@ trait MouseDraw {
     event match {
       // case MouseButton(true, pos, MouseButton.Left) =>
       case PressEvent(pos) =>
-        Log(s"Draw at $pos")
+        // Log(s"Draw at $pos")
         startPos = Some(pos)
         drawBegin(pos)
         true
       // case MouseButton(false, pos, MouseButton.Left) =>
       case ReleaseEvent(pos, _) =>
-        Log(s"Release at $pos")
+        // Log(s"Release at $pos")
         startPos = None
         drawEnd(pos)
         true

@@ -32,7 +32,6 @@ object QuadGrid extends Codec[QuadGrid[Int]](1) {
 
 }
 
-//TODO Drop defaultCell. Rename to Undefined and use only in merge.
 class QuadGrid[T](val emptyCell: T, var quad: Quad[T] = null, var depth: Int = 1) extends MutableGrid[T] {
 
   val emptyQuad = Quad(emptyCell)
@@ -40,10 +39,6 @@ class QuadGrid[T](val emptyCell: T, var quad: Quad[T] = null, var depth: Int = 1
   def size = 1 << depth
   def radius = size / 2
   def offset = -radius
-
-  //  def this(defaultCell: T) {
-  //    this(defaultCell, Quad(defaultCell), 1)
-  //  }
 
   def copy = new QuadGrid(emptyCell, quad, depth)
 
@@ -98,7 +93,5 @@ class QuadGrid[T](val emptyCell: T, var quad: Quad[T] = null, var depth: Int = 1
       }
     }
   }
-
-
 
 }
