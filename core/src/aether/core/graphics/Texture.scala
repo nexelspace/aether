@@ -88,7 +88,7 @@ object Texture {
     graphics.textureFactory.create(Config(size = Some(Vec2I(sizeX, sizeY))))
   }
 
-  def apply(flags: Int, sizeX: Int, sizeY: Int)(using graphics: Graphics): Texture = {
+  def apply(flags: Int, sizeX: Int, sizeY: Int, format: Format = Format.RGBA_8888)(using graphics: Graphics): Texture = {
     graphics.textureFactory.create(Config(flags = flags, size = Some(Vec2I(sizeX, sizeY))))
   }
 }

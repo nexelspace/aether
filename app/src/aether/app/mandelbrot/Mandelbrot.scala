@@ -15,7 +15,7 @@ import aether.core.graphics.ShaderBuffer.*
 import aether.core.graphics.Texture
 import aether.core.platform.Platform
 import aether.core.platform.Log
-import aether.lib.canvas.shader.ShaderVarBuffer
+import aether.lib.graphics.ShaderVarBuffer
 import aether.core.graphics.ShaderProgram
 import aether.core.util.Colors
 import aether.core.graphics.Graphics

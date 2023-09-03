@@ -102,4 +102,9 @@ trait Graphics {
 
   def clear(r: Float, g: Float, b: Float, a: Float): Unit
 
+  def clear(argb: Int): Unit = {
+    clear(((argb >> 16) & 0xff) / 255f, ((argb >> 8) & 0xff) / 255f, (argb & 0xff) / 255f, ((argb >> 24) & 0xff) / 255f)
+  }
+
+
 }

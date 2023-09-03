@@ -10,13 +10,16 @@ import aether.core.base.Ref
 import aether.core.graphics.Graphics
 import aether.core.platform.Resource
 import aether.core.platform.Dispatcher
+import aether.core.platform.Platform
 
 object Font {
-  def load(base: Base, textureFile: String, configFile: String)(using g: Graphics, dispatcher: Dispatcher): Resource[Font] = {
+  def load(base: Base, textureFile: String, configFile: String)(using p: Platform, g: Graphics): Resource[Font] = {
+    given Dispatcher = p.dispatcher
     load(base.ref(textureFile), base.ref(configFile))
   }
 
   def load(textureRef: Ref, configRef: Ref)(using g: Graphics, dispatcher: Dispatcher): Resource[Font] = {
+    Log(s"Loading font $textureRef, $configRef")
     for {
       texture <- g.textureFactory.load(textureRef, Texture.Config(flags = Texture.Flag.Readable))
       config <- configRef.loadString()
@@ -26,6 +29,15 @@ object Font {
   def create(texture: Texture, config: String): Font = {
     val regions = FontParser.parseRegions(texture)
     new Font(config, regions.map(_.logical), texture)
+  }
+
+  private var defaultFont: Resource[Font] = null
+
+  def default()(using platform: Platform, graphics: Graphics): Resource[Font] = {
+    if (defaultFont == null) {
+      defaultFont = load(platform.resource(this), "font_default.png", "font_default.cfg")
+    }
+    defaultFont
   }
 }
 

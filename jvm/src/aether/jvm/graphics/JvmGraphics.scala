@@ -36,7 +36,6 @@ class JvmGraphics extends Graphics {
 
   def render(disp: Display, callback: (Display) => Unit) = {
     target = disp
-    Log("Init render size "+target.size)
     initRendering(RectI(0, 0, target.size.x, target.size.y), true)
     glBindFramebuffer(GL_FRAMEBUFFER, 0)
 

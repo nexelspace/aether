@@ -7,6 +7,7 @@ import aether.core.platform.Module
 import aether.js.platform.JsPlatform
 import aether.app.shader.ShaderApp
 import aether.app.mandelbrot.Mandelbrot
+import aether.app.canvas.CanvasApp
 
 @JSExportTopLevel("App")
 @JSExportAll
@@ -24,6 +25,8 @@ object apps {
 
   @main
   def mandelbrot() = launch("mandelbrot", new Mandelbrot(platform))
+  @main
+  def canvas() = launch("canvas", new CanvasApp(platform))
 
 
 }

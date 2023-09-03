@@ -7,6 +7,7 @@ import aether.core.graphics.ShaderBuffer.Type
 import aether.core.types.RectF
 import aether.core.graphics.Graphics
 import aether.core.types.Color
+import aether.lib.graphics.ShaderVarBuffer
 
 class RenderBuffer(size: Int)(using g: Graphics) {
   val vertex = ShaderVarBuffer(Size.Dynamic | Target.Vertex | Type.Float, size, 3)

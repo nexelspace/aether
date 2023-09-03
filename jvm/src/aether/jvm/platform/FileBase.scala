@@ -15,7 +15,7 @@ import java.io.File
 import aether.core.platform.Log
 
 class FileBase(basePath: String)(using dispatcher: Dispatcher) extends Base {
-  def toUrl(path: String): String = s"file://$path"
+  def toUrl(path: String): String = s"file://$basePath/$path"
 
   def base(path: String): Base = FileBase(s"$basePath/$path")
 

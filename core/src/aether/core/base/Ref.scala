@@ -15,4 +15,6 @@ case class Ref(base: Base, segments: Seq[String]) {
   def loadBytes() = base.loadBytes(this.path)
   def loadJson() = base.loadJson(this.path)
 
+  override def toString = toUrl
+
 }

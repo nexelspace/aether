@@ -16,6 +16,15 @@ object PointerEvent {
 
   }
 
+  def withPos(event: PointerEvent, pos: Vec2F): PointerEvent = {
+    event match {
+      case e: MouseButton => e.copy(pos = pos)
+      case e: MouseWheel => e.copy(pos = pos)
+      case e: MouseMove => e.copy(pos = pos)
+      case e: MouseRelative => e.copy(pos = pos)
+    }
+  }
+
   case class MouseButton(val pressed: Boolean, pos: Vec2F, button: Int) extends PointerEvent {
   }
 

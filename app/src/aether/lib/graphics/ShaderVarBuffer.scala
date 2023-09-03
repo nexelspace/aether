@@ -1,4 +1,4 @@
-package aether.lib.canvas.shader
+package aether.lib.graphics
 
 import aether.core.graphics.*
 import aether.core.buffers.*

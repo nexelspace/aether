@@ -22,7 +22,7 @@ trait Platform(modules: Seq[Module]) {
   val name: Platform.Name
   val log: Log
   val base: Base
-  val resourceBase: Base
+  protected val resourceBase: Base
 
   def resource(source: Any): Base = {
     val path = source.getClass().getName().split("\\.").dropRight(1).mkString("/")

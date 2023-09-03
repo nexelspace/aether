@@ -120,6 +120,7 @@ class Resource[T]() {
   }
 
   def apply(): T = get.get
+  def isLoaded: Boolean = get.isDefined
 
   def set(newRes: T)(using dispatcher: Dispatcher): Unit = {
     assert(state == State.Loading())

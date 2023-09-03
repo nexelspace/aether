@@ -15,6 +15,12 @@
             "request": "launch",
             "name": "MandelbrotApp",
             "mainClass": "aether.jvm.app.mandelbrot",
+        },
+        {
+            "type": "scala",
+            "request": "launch",
+            "name": "CanvasApp",
+            "mainClass": "aether.jvm.app.canvas",
         }
     ]
 }

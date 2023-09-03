@@ -52,7 +52,7 @@ object JvmTexture {
         val stream = new BufferedInputStream(new ByteArrayInputStream(buffer.toByteArray))
         val data = fromStream(stream, config.fileFormat, config.format)
         assert(data != null, "Not found: " + ref)
-        new JvmTexture(config, data)
+        new JvmTexture(config.copy(size = Some(Vec2I(data.sizeX, data.sizeY))), data)
       }
     }
 
